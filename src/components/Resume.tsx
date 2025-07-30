@@ -22,6 +22,11 @@ const Resume = () => {
 
   const education = [
     {
+      school: "Nigerian Army University",
+      period: "2025 – Present",
+      level: "Current Student"
+    },
+    {
       school: "Lord's Secondary School",
       period: "2008 – 2024",
       level: "Secondary Education"

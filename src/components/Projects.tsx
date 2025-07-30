@@ -49,7 +49,7 @@ const Projects = () => {
       title: "Rock, Paper, Scissors Game",
       description: "A fun command-line game where the user plays against the computer. Uses emoji icons for a playful experience.",
       technologies: ["Python", "Random module"],
-      github: "https://github.com/codex-prime01/rock-paper-scissors-python",
+      github: "https://github.com/Codex-Prime01/rock-paper-scissors",
       live: null,
       icon: Gamepad2,
       gradient: "from-secondary/20 to-primary/20"
@@ -59,7 +59,7 @@ const Projects = () => {
       title: "My Text Adventure Game",
       description: "A story-based Python game where player choices determine the outcome. Includes branching logic and replay option.",
       technologies: ["Python", "Conditionals", "Loops"],
-      github: "https://github.com/codex-prime01/my--adventure-game",
+      github: "https://github.com/Codex-Prime01/my-adventure-game",
       live: null,
       icon: Gamepad2,
       gradient: "from-accent/20 to-secondary/20"

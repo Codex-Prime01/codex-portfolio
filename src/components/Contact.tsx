@@ -56,10 +56,17 @@ const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // In a real implementation, this would send the message via email service
+    // Create mailto link with form data
+    const subject = encodeURIComponent(`Portfolio Contact: ${formData.name}`);
+    const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`);
+    const mailtoLink = `mailto:samailaperey2@gmail.com?subject=${subject}&body=${body}`;
+    
+    // Open default email client
+    window.location.href = mailtoLink;
+    
     toast({
-      title: "Message Sent! 🚀",
-      description: "Thanks for reaching out! I'll get back to you soon.",
+      title: "Email Client Opened! 📧",
+      description: "Your default email client should open with the message ready to send.",
     });
     
     // Reset form
