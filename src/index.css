@@ -2,166 +2,244 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Futuristic Dark Portfolio Design System */
+/* ==========================================================================
+   Codex Prime — design tokens
+   ========================================================================== */
 
 @layer base {
   :root {
-    /* Dark space background */
-    --background: 222 84% 4%;
-    --foreground: 210 40% 98%;
+    --ink: #08080a;
+    --ink-2: #111114;
+    --ink-3: #17171b;
+    --paper: #f3f1ea;
+    --dim: #807f78;
+    --ember: #ff3b1d;
+    --ember-2: #ff6a3d;
+    --line: rgba(243, 241, 234, 0.1);
+    --line-strong: rgba(243, 241, 234, 0.22);
 
-    /* Neon accent colors */
-    --neon-cyan: 180 100% 50%;
-    --neon-purple: 270 100% 70%;
-    --neon-pink: 320 100% 70%;
-    --neon-blue: 240 100% 70%;
-    --neon-green: 120 100% 50%;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-plate: cubic-bezier(0.33, 0, 0, 1);
+    --gutter: clamp(1rem, 3vw, 2.5rem);
+    --nav-h: 4.5rem;
 
-    /* Glass morphism cards */
-    --glass-bg: 222 84% 4% / 0.1;
-    --glass-border: 210 40% 98% / 0.1;
-    --glass-shadow: 0 25px 50px -12px hsl(222 84% 4% / 0.25);
-
-    /* Primary theme */
-    --primary: 180 100% 50%;
-    --primary-foreground: 222 84% 4%;
-    --primary-glow: 180 100% 50% / 0.5;
-
-    /* Secondary theme */
-    --secondary: 270 100% 70%;
-    --secondary-foreground: 210 40% 98%;
-    --secondary-glow: 270 100% 70% / 0.3;
-
-    /* Card variants */
-    --card: 222 84% 8% / 0.5;
-    --card-foreground: 210 40% 98%;
-    --card-border: 210 40% 98% / 0.1;
-
-    /* Interactive elements */
-    --accent: 320 100% 70%;
-    --accent-foreground: 210 40% 98%;
-    --accent-glow: 320 100% 70% / 0.4;
-
-    /* Muted elements */
-    --muted: 222 84% 15%;
-    --muted-foreground: 210 20% 65%;
-
-    /* Borders and inputs */
-    --border: 210 40% 98% / 0.1;
-    --input: 222 84% 15% / 0.8;
-    --ring: 180 100% 50%;
-
-    /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(222 84% 4%), hsl(240 100% 8%));
-    --gradient-card: linear-gradient(145deg, hsl(222 84% 6% / 0.8), hsl(240 100% 8% / 0.6));
-    --gradient-neon: linear-gradient(90deg, hsl(180 100% 50%), hsl(270 100% 70%), hsl(320 100% 70%));
-    --gradient-text: linear-gradient(90deg, hsl(180 100% 70%), hsl(270 100% 80%));
-
-    /* Shadows and glows */
-    --shadow-neon: 0 0 20px hsl(var(--primary-glow)), 0 0 40px hsl(var(--primary-glow)), 0 0 80px hsl(var(--primary-glow));
-    --shadow-card: 0 25px 50px -12px hsl(222 84% 4% / 0.25), 0 0 0 1px hsl(var(--card-border));
-    --shadow-hover: 0 35px 60px -12px hsl(var(--primary-glow)), 0 0 0 1px hsl(var(--primary));
-
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-    --radius: 0.75rem;
+    /* shadcn/ui tokens (toast, inputs) mapped onto the same palette, in HSL. */
+    --background: 240 11% 3%;
+    --foreground: 45 29% 93%;
+    --card: 240 8% 7%;
+    --card-foreground: 45 29% 93%;
+    --card-border: 45 29% 93% / 0.1;
+    --popover: 240 8% 7%;
+    --popover-foreground: 45 29% 93%;
+    --primary: 8 100% 56%;
+    --primary-foreground: 240 11% 3%;
+    --secondary: 240 8% 10%;
+    --secondary-foreground: 45 29% 93%;
+    --muted: 240 8% 10%;
+    --muted-foreground: 53 3% 49%;
+    --accent: 14 100% 62%;
+    --accent-foreground: 240 11% 3%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 45 29% 93%;
+    --border: 45 29% 93% / 0.1;
+    --input: 45 29% 93% / 0.22;
+    --ring: 8 100% 56%;
+    --radius: 0px;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
-    @apply bg-background text-foreground;
-    background: var(--gradient-hero);
-    min-height: 100vh;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: Onest, system-ui, sans-serif;
+    font-feature-settings: "ss01";
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  /* Anchored sections clear the fixed bar instead of sliding under it. */
+  section[id] {
+    scroll-margin-top: var(--nav-h);
+  }
+
+  ::selection {
+    background: var(--ember);
+    color: var(--ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ember);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
   }
 }
+
+/* ==========================================================================
+   Shared pieces
+   ========================================================================== */
 
 @layer components {
-  /* Glassmorphism card component */
-  .glass-card {
-    @apply backdrop-blur-xl bg-card border border-card-border rounded-lg;
-    background: var(--gradient-card);
-    box-shadow: var(--shadow-card);
+  .label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dim);
   }
 
-  /* Neon glow button */
-  .btn-neon {
-    @apply relative px-8 py-3 rounded-lg font-semibold transition-all duration-300;
-    background: linear-gradient(145deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.1));
-    border: 1px solid hsl(var(--primary) / 0.3);
-    color: hsl(var(--primary));
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.1);
+  .display {
+    font-family: Anton, Impact, sans-serif;
+    text-transform: uppercase;
+    line-height: 0.88;
+    letter-spacing: -0.005em;
   }
 
-  .btn-neon:hover {
-    @apply scale-105;
-    color: hsl(var(--primary-foreground));
-    background: hsl(var(--primary));
-    box-shadow: var(--shadow-neon);
+  .shell {
+    width: 100%;
+    max-width: 96rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
   }
 
-  /* Gradient text */
-  .gradient-text {
-    background: var(--gradient-text);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size 0.45s var(--ease-out), color 0.2s;
+  }
+  .link-underline:hover,
+  .link-underline:focus-visible {
+    background-size: 100% 1px;
   }
 
-  /* Floating animation */
-  .floating {
-    animation: floating 3s ease-in-out infinite;
+  /* Text reveal: the words sit in a clipped line and rise into it. */
+  .split {
+    display: inline;
+  }
+  .split-unit {
+    display: inline-block;
+    opacity: 0;
+    transform: translate3d(0, 0.4em, 0);
+    transition:
+      opacity 0.7s var(--ease-out),
+      transform 0.9s var(--ease-out);
+    transition-delay: var(--d, 0ms);
+    will-change: transform;
+  }
+  .is-in .split-unit,
+  .split-unit.is-in {
+    opacity: 1;
+    transform: none;
   }
 
-  /* Pulse glow animation */
-  .pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite alternate;
+  /* Block reveal for paragraphs and panels. */
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+    transition:
+      opacity 0.6s var(--ease-out),
+      transform 0.8s var(--ease-out);
+    transition-delay: var(--d, 0ms);
+  }
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
   }
 
-  /* Hover lift effect */
-  .hover-lift {
-    @apply transition-transform duration-300;
+  /* Rules that draw themselves in from the left. */
+  .rule {
+    height: 1px;
+    background: var(--line-strong);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1.1s var(--ease-out);
+    transition-delay: var(--d, 0ms);
+  }
+  .rule.is-in {
+    transform: scaleX(1);
   }
 
-  .hover-lift:hover {
-    @apply -translate-y-2;
-    box-shadow: var(--shadow-hover);
-  }
-}
-
-@layer utilities {
-  /* Custom animations */
-  @keyframes floating {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+  /* Without JavaScript nothing waits for an observer that never runs. */
+  .no-js .split-unit,
+  .no-js .reveal,
+  .no-js .rule {
+    opacity: 1;
+    transform: none;
   }
 
-  @keyframes pulse-glow {
-    0% { box-shadow: 0 0 20px hsl(var(--primary) / 0.1); }
-    100% { box-shadow: 0 0 40px hsl(var(--primary) / 0.3), 0 0 80px hsl(var(--primary) / 0.1); }
+  @media (prefers-reduced-motion: reduce) {
+    .split-unit,
+    .reveal,
+    .rule {
+      opacity: 1;
+      transform: none;
+    }
   }
 
-  @keyframes slideInUp {
-    0% { opacity: 0; transform: translateY(30px); }
-    100% { opacity: 1; transform: translateY(0); }
+  /* The marquee track: two copies of the run, slid by exactly one copy. */
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 32s linear infinite;
+  }
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+  @keyframes marquee {
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
   }
 
-  @keyframes fadeInLeft {
-    0% { opacity: 0; transform: translateX(-30px); }
-    100% { opacity: 1; transform: translateX(0); }
+  /* Project plates: grey at rest, colour on hover or focus. */
+  .plate-media img {
+    filter: grayscale(1) contrast(1.05) brightness(0.8);
+    transform: scale(1.04);
+    transition:
+      filter 0.9s var(--ease-out),
+      transform 1.4s var(--ease-out);
+  }
+  .plate:hover .plate-media img,
+  .plate:focus-within .plate-media img {
+    filter: none;
+    transform: scale(1);
+  }
+  @media (hover: none) {
+    .plate-media img {
+      filter: none;
+      transform: none;
+    }
   }
 
-  .animate-slide-in-up {
-    animation: slideInUp 0.6s ease-out;
-  }
-
-  .animate-fade-in-left {
-    animation: fadeInLeft 0.6s ease-out;
+  /* Faint film grain over everything, so the black is never flat. */
+  .grain::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }

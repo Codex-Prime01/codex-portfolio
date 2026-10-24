@@ -1,97 +1,99 @@
-import { Badge } from "@/components/ui/badge";
-import { Code, Server, Database, GitBranch, FileText, Palette } from "lucide-react";
+import { SplitText } from "@/components/motion/SplitText";
+import { Reveal } from "@/components/motion/Reveal";
+import { SectionHead } from "@/components/Projects";
+import { PROFILE, SKILLS, STATS } from "@/data/profile";
 
 const About = () => {
-  const skills = [
-    { name: "Python", icon: Code, level: "Advanced" },
-    { name: "Object-Oriented Programming", icon: Server, level: "Advanced" },
-    { name: "JSON", icon: Database, level: "Intermediate" },
-    { name: "File Handling", icon: FileText, level: "Advanced" },
-    { name: "Git & GitHub", icon: GitBranch, level: "Intermediate" },
-    { name: "HTML, CSS, JavaScript", icon: Palette, level: "Basic Frontend" },
-    { name: "Flask", icon: Server, level: "Learning" }
+  const facts = [
+    { term: "Based in", detail: PROFILE.location },
+    { term: "Availability", detail: PROFILE.availability },
+    { term: "Looking for", detail: PROFILE.lookingFor },
+    { term: "Languages", detail: PROFILE.languages.join(", ") },
   ];
 
   return (
-    <section id="about" className="py-20 px-6">
-      <div className="container mx-auto max-w-6xl">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="gradient-text">About Me</span>
-          </h2>
-          <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
+    <section id="about" aria-labelledby="about-title" className="relative bg-ink-2 py-24 sm:py-32">
+      <div className="shell">
+        <SectionHead index="03" title="About" id="about-title" aside={PROFILE.fullName} />
+
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-6">
+          <div className="lg:col-span-6">
+            <SplitText
+              as="p"
+              stagger={35}
+              text="I build and ship complete products — from the database and the API to the page the user clicks."
+              className="block text-balance text-3xl font-medium leading-[1.12] text-paper sm:text-4xl lg:text-5xl"
+            />
+          </div>
+
+          <div className="space-y-6 text-lg leading-relaxed text-paper/75 lg:col-span-5 lg:col-start-8">
+            {PROFILE.about.map((paragraph, i) => (
+              <Reveal as="p" key={i} delay={i * 120}>
+                {paragraph}
+              </Reveal>
+            ))}
+          </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* About Text */}
-          <div className="glass-card p-8 hover-lift animate-fade-in-left">
-            <p className="text-lg leading-relaxed text-muted-foreground mb-6">
-              Hi, I'm <span className="text-primary font-semibold">Samaila Peter</span> — a self-taught backend developer 
-              with over <span className="text-secondary font-semibold">2 years of freelance experience</span>. 
-              I specialize in building clean and functional backend systems using 
-              <span className="text-accent font-semibold"> Python</span> and object-oriented programming.
-            </p>
-            
-            <p className="text-lg leading-relaxed text-muted-foreground mb-6">
-              I've worked on web apps, CLI tools, and e-commerce systems. Currently, I'm interning at the 
-              <span className="text-primary font-semibold"> Federal College of Education (Special), Oyo State</span>, 
-              while also working on expanding my backend skills into frameworks like 
-              <span className="text-secondary font-semibold"> Flask</span> and 
-              <span className="text-accent font-semibold"> FastAPI</span>.
-            </p>
+        <dl className="mt-20 grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">
+          {facts.map((fact, i) => (
+            <Reveal key={fact.term} delay={i * 80} className="bg-ink-2 py-5 pr-6 sm:px-6 lg:first:pl-0">
+              <dt className="label">{fact.term}</dt>
+              <dd className="mt-2 text-paper">{fact.detail}</dd>
+            </Reveal>
+          ))}
+        </dl>
 
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="outline" className="border-primary/30 text-primary">
-                🇳🇬 Based in Nigeria
-              </Badge>
-              <Badge variant="outline" className="border-secondary/30 text-secondary">
-                Also known as Codex Prime
-              </Badge>
-              <Badge variant="outline" className="border-accent/30 text-accent">
-                Pete
-              </Badge>
-            </div>
-          </div>
+        {/* Numbers */}
+        <ul className="mt-20 grid grid-cols-2 border-t border-line lg:grid-cols-4">
+          {STATS.map((stat, i) => (
+            <li key={stat.label} className="border-b border-line py-8 pr-4 even:pl-4 lg:border-b-0 lg:border-r lg:px-6 lg:first:pl-0 lg:last:border-r-0">
+              <p className="flex items-baseline gap-1">
+                <SplitText by="letter" text={stat.value} delay={i * 120} className="display block text-6xl text-paper sm:text-7xl" />
+                {stat.unit && <span className="font-mono text-sm text-ember">{stat.unit}</span>}
+              </p>
+              <Reveal delay={200 + i * 120}>
+                <p className="label mt-3 max-w-[18ch] leading-relaxed">{stat.label}</p>
+              </Reveal>
+            </li>
+          ))}
+        </ul>
 
-          {/* Skills Grid */}
-          <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-center mb-8">
-              <span className="gradient-text">Skills & Tools</span>
-            </h3>
-            
-            <div className="grid grid-cols-1 gap-4">
-              {skills.map((skill, index) => {
-                const Icon = skill.icon;
-                return (
-                  <div 
-                    key={skill.name}
-                    className="glass-card p-4 hover-lift group cursor-pointer"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                          <Icon className="w-5 h-5 text-primary" />
-                        </div>
-                        <span className="font-semibold text-foreground">{skill.name}</span>
-                      </div>
-                      <Badge 
-                        variant="outline" 
-                        className={`
-                          ${skill.level === 'Advanced' ? 'border-primary/30 text-primary' : ''}
-                          ${skill.level === 'Intermediate' ? 'border-secondary/30 text-secondary' : ''}
-                          ${skill.level === 'Learning' ? 'border-accent/30 text-accent' : ''}
-                          ${skill.level === 'Basic Frontend' ? 'border-muted-foreground/30 text-muted-foreground' : ''}
-                        `}
-                      >
-                        {skill.level}
-                      </Badge>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+        {/* Skills */}
+        <div className="mt-24">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <SplitText as="h3" text="Toolbox" by="letter" className="display block text-5xl text-paper sm:text-7xl" />
+            <p className="label">Grouped as on my résumé</p>
           </div>
+          <ul className="border-t border-line">
+            {SKILLS.map((group, i) => (
+              <Reveal
+                as="li"
+                key={group.group}
+                delay={i * 70}
+                className="group grid gap-3 border-b border-line py-6 transition-colors duration-500 hover:bg-ink-3 sm:grid-cols-[14rem_1fr] sm:items-baseline sm:px-3"
+              >
+                <h4 className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-dim group-hover:text-ember">
+                  <span className="text-ember">{String(i + 1).padStart(2, "0")}</span>
+                  {group.group}
+                </h4>
+                <p className="text-lg leading-relaxed text-paper sm:text-xl">
+                  {group.items.map((item, j) => (
+                    <span key={item}>
+                      <span className="whitespace-nowrap">{item}</span>
+                      {j < group.items.length - 1 && (
+                        <>
+                          <span className="sr-only">,</span>
+                          {/* The real space is the line-break opportunity between items. */}{" "}
+                          <span className="pr-2 text-ember/60" aria-hidden="true">/</span>
+                        </>
+                      )}
+                    </span>
+                  ))}
+                </p>
+              </Reveal>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

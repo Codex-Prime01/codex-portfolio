@@ -18,7 +18,31 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				display: ['Anton', 'Impact', 'sans-serif'],
+				sans: ['Onest', 'system-ui', 'sans-serif'],
+				mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
+			},
+			transitionTimingFunction: {
+				out: 'cubic-bezier(0.16, 1, 0.3, 1)'
+			},
 			colors: {
+				// Codex Prime palette — the raw tokens live in index.css.
+				ink: {
+					DEFAULT: 'var(--ink)',
+					2: 'var(--ink-2)',
+					3: 'var(--ink-3)'
+				},
+				paper: 'var(--paper)',
+				dim: 'var(--dim)',
+				ember: {
+					DEFAULT: 'var(--ember)',
+					2: 'var(--ember-2)'
+				},
+				line: {
+					DEFAULT: 'var(--line)',
+					strong: 'var(--line-strong)'
+				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',

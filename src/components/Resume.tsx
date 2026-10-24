@@ -1,217 +1,154 @@
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Download, Award, Briefcase, GraduationCap, MapPin } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
+import { SplitText } from "@/components/motion/SplitText";
+import { Reveal } from "@/components/motion/Reveal";
+import { SectionHead } from "@/components/Projects";
+import { ChamferLink, Arrow } from "@/components/site/ChamferLink";
+import { Corners } from "@/components/site/Intro";
+import { useInView } from "@/lib/motion";
+import { CERTIFICATIONS, JOURNEY, PROFILE } from "@/data/profile";
+
+/** Turns the marker makes over the whole run of the rail. */
+const MARKER_TURNS = 4;
 
 const Resume = () => {
-  const experience = [
-    {
-      title: "Backend Developer Intern",
-      company: "Federal College of Education (Special)",
-      location: "Oyo State, Nigeria",
-      period: "Current",
-      type: "Internship"
-    },
-    {
-      title: "Freelance Backend Developer",
-      company: "Self-Employed",
-      location: "Remote",
-      period: "2+ Years",
-      type: "Freelance"
-    }
-  ];
+  const railRef = useRef<HTMLDivElement>(null);
+  const threadRef = useRef<HTMLDivElement>(null);
+  const markerRef = useRef<HTMLDivElement>(null);
 
-  const education = [
-    {
-      school: "Nigerian Army University",
-      period: "2025 – Present",
-      level: "Current Student"
-    },
-    {
-      school: "Lord's Secondary School",
-      period: "2008 – 2024",
-      level: "Secondary Education"
-    }
-  ];
-
-  const certifications = [
-    {
-      name: "Free Code Camp Scientific Computing with Python",
-      issuer: "freeCodeCamp",
-      status: "Completed"
-    },
-    {
-      name: "Free Code Camp Responsive Web Design",
-      issuer: "freeCodeCamp", 
-      status: "Completed"
-    },
-    {
-      name: "Cisco Python Essentials 1",
-      issuer: "Cisco Networking Academy",
-      status: "Completed"
-    },
-    {
-      name: "Python Essentials 2",
-      issuer: "Cisco Networking Academy",
-      status: "Currently Studying"
-    }
-  ];
-
-  const downloadResume = () => {
-    // In a real implementation, this would download the actual resume PDF
-    window.open('#resume-download', '_blank');
-  };
+  // The thread follows the middle of the screen down the rail.
+  useEffect(() => {
+    const rail = railRef.current;
+    const thread = threadRef.current;
+    const marker = markerRef.current;
+    if (!rail || !thread || !marker) return;
+    let frame = 0;
+    const apply = () => {
+      const rect = rail.getBoundingClientRect();
+      const middle = window.innerHeight * 0.5;
+      const progress = Math.min(1, Math.max(0, (middle - rect.top) / rect.height));
+      const run = progress * rect.height;
+      thread.style.transform = `scaleY(${progress})`;
+      marker.style.transform = `translate3d(-50%, ${run}px, 0) rotate(${progress * 360 * MARKER_TURNS}deg)`;
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(apply);
+    };
+    apply();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   return (
-    <section id="resume" className="py-20 px-6">
-      <div className="container mx-auto max-w-6xl">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="gradient-text">Resume</span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            My professional journey and qualifications
-          </p>
-          <div className="w-24 h-1 bg-primary mx-auto rounded-full mt-6"></div>
-        </div>
+    <section id="journey" aria-labelledby="journey-title" className="relative bg-ink py-24 sm:py-32">
+      <div className="shell">
+        <SectionHead index="04" title="Journey" id="journey-title" aside="Experience · Education · Certifications" />
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Left Column */}
-          <div className="space-y-8">
-            {/* Experience */}
-            <div className="glass-card p-6 hover-lift">
-              <div className="flex items-center mb-6">
-                <div className="p-3 rounded-lg bg-primary/10">
-                  <Briefcase className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-2xl font-bold ml-4">Experience</h3>
-              </div>
-              
-              <div className="space-y-6">
-                {experience.map((exp, index) => (
-                  <div key={index} className="border-l-2 border-primary/30 pl-6 relative">
-                    <div className="absolute -left-2 top-0 w-4 h-4 bg-primary rounded-full"></div>
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-lg">{exp.title}</h4>
-                      <p className="text-primary font-medium">{exp.company}</p>
-                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                        <div className="flex items-center">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          {exp.location}
-                        </div>
-                        <span>•</span>
-                        <span>{exp.period}</span>
-                      </div>
-                      <Badge 
-                        variant="outline" 
-                        className={`
-                          ${exp.type === 'Internship' ? 'border-secondary/30 text-secondary' : 'border-accent/30 text-accent'}
-                        `}
-                      >
-                        {exp.type}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Education */}
-            <div className="glass-card p-6 hover-lift">
-              <div className="flex items-center mb-6">
-                <div className="p-3 rounded-lg bg-secondary/10">
-                  <GraduationCap className="w-6 h-6 text-secondary" />
-                </div>
-                <h3 className="text-2xl font-bold ml-4">Education</h3>
-              </div>
-              
-              <div className="space-y-4">
-                {education.map((edu, index) => (
-                  <div key={index} className="border-l-2 border-secondary/30 pl-6 relative">
-                    <div className="absolute -left-2 top-0 w-4 h-4 bg-secondary rounded-full"></div>
-                    <div>
-                      <h4 className="font-semibold text-lg">{edu.school}</h4>
-                      <p className="text-secondary font-medium">{edu.level}</p>
-                      <p className="text-sm text-muted-foreground">{edu.period}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+        <div className="relative">
+          {/* The rail */}
+          <div
+            ref={railRef}
+            aria-hidden="true"
+            className="absolute bottom-0 left-[0.4rem] top-0 w-px md:left-[30%]"
+          >
+            <div className="absolute inset-0 bg-[repeating-linear-gradient(to_bottom,var(--line-strong)_0_6px,transparent_6px_12px)]" />
+            <div ref={threadRef} className="absolute inset-0 origin-top scale-y-0 bg-ember" />
+            <div ref={markerRef} className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 bg-ember shadow-[0_0_24px_var(--ember)]" />
           </div>
 
-          {/* Right Column */}
-          <div className="space-y-8">
-            {/* Certifications */}
-            <div className="glass-card p-6 hover-lift">
-              <div className="flex items-center mb-6">
-                <div className="p-3 rounded-lg bg-accent/10">
-                  <Award className="w-6 h-6 text-accent" />
-                </div>
-                <h3 className="text-2xl font-bold ml-4">Certifications</h3>
-              </div>
-              
-              <div className="space-y-4">
-                {certifications.map((cert, index) => (
-                  <div key={index} className="p-4 border border-card-border rounded-lg hover:border-accent/30 transition-colors">
-                    <h4 className="font-semibold text-lg mb-2">{cert.name}</h4>
-                    <p className="text-accent font-medium mb-2">{cert.issuer}</p>
-                    <Badge 
-                      variant="outline" 
-                      className={`
-                        ${cert.status === 'Completed' ? 'border-primary/30 text-primary' : 'border-secondary/30 text-secondary'}
-                      `}
-                    >
-                      {cert.status}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Download Resume */}
-            <div className="glass-card p-8 text-center hover-lift">
-              <h3 className="text-2xl font-bold mb-4">
-                <span className="gradient-text">Download Full Resume</span>
-              </h3>
-              <p className="text-muted-foreground mb-6">
-                Get the complete PDF version of my resume with detailed information
-              </p>
-              <Button 
-                className="btn-neon w-full"
-                onClick={downloadResume}
-              >
-                <Download className="w-5 h-5 mr-2" />
-                Download Resume PDF
-              </Button>
-            </div>
-
-            {/* Quick Stats */}
-            <div className="glass-card p-6 hover-lift">
-              <h3 className="text-xl font-bold mb-4 text-center">Quick Stats</h3>
-              <div className="grid grid-cols-2 gap-4 text-center">
-                <div className="p-4 bg-primary/10 rounded-lg">
-                  <div className="text-2xl font-bold text-primary">2+</div>
-                  <div className="text-sm text-muted-foreground">Years Experience</div>
-                </div>
-                <div className="p-4 bg-secondary/10 rounded-lg">
-                  <div className="text-2xl font-bold text-secondary">4+</div>
-                  <div className="text-sm text-muted-foreground">Projects</div>
-                </div>
-                <div className="p-4 bg-accent/10 rounded-lg">
-                  <div className="text-2xl font-bold text-accent">4</div>
-                  <div className="text-sm text-muted-foreground">Certifications</div>
-                </div>
-                <div className="p-4 bg-primary/10 rounded-lg">
-                  <div className="text-2xl font-bold text-primary">🇳🇬</div>
-                  <div className="text-sm text-muted-foreground">Based in Nigeria</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ol className="space-y-16 sm:space-y-24">
+            {JOURNEY.map((entry) => (
+              <JourneyRow key={entry.title} entry={entry} />
+            ))}
+          </ol>
         </div>
+
+        {/* Certifications */}
+        <div className="mt-32">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <SplitText as="h3" text="Certified" by="letter" className="display block text-5xl text-paper sm:text-7xl" />
+            <p className="label">freeCodeCamp · Cisco Networking Academy</p>
+          </div>
+          <ul className="grid gap-6 sm:grid-cols-2">
+            {CERTIFICATIONS.map((cert, i) => (
+              <Reveal as="li" key={cert.name} delay={i * 80} className="group relative p-6">
+                <Corners className="text-paper/30 transition-colors duration-500 group-hover:text-ember" />
+                <p className="label">{cert.issuer}</p>
+                <p className="mt-3 font-display text-3xl uppercase leading-none text-paper">{cert.name}</p>
+                {"verify" in cert && cert.verify && (
+                  <a
+                    href={cert.verify}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="label mt-5 inline-flex items-center gap-2 text-ember hover:text-paper"
+                  >
+                    Verify certificate <Arrow direction="up-right" />
+                    <span className="sr-only">(opens in a new tab)</span>
+                  </a>
+                )}
+              </Reveal>
+            ))}
+          </ul>
+        </div>
+
+        <Reveal className="mt-20 flex flex-col items-start justify-between gap-6 border-t border-line pt-10 sm:flex-row sm:items-center">
+          <p className="max-w-md text-lg text-paper/80">The full picture, on two pages.</p>
+          <ChamferLink href={PROFILE.resumeUrl} download arrow="down">
+            Download résumé (PDF)
+          </ChamferLink>
+        </Reveal>
       </div>
     </section>
   );
 };
+
+function JourneyRow({ entry }: { entry: (typeof JOURNEY)[number] }) {
+  const ref = useRef<HTMLLIElement>(null);
+  // Lit once the thread (the middle of the screen) reaches it.
+  const reached = useInView(ref, { rootMargin: "0px 0px -50% 0px" });
+
+  return (
+    <li ref={ref} className="relative grid gap-4 pl-10 md:grid-cols-[30%_1fr] md:gap-0 md:pl-0">
+      <span
+        aria-hidden="true"
+        className={cn(
+          "absolute left-[0.4rem] top-3 h-2.5 w-2.5 -translate-x-1/2 rotate-45 border transition-colors duration-500 md:left-[30%]",
+          reached ? "border-ember bg-ember" : "border-line-strong bg-ink",
+        )}
+      />
+      <div className="md:pr-12 md:text-right">
+        <p
+          className={cn(
+            "display text-4xl transition-colors duration-700 sm:text-5xl",
+            reached ? "text-paper" : "text-paper/25",
+          )}
+        >
+          {entry.when}
+        </p>
+        <p className="label mt-2">{entry.kind}</p>
+      </div>
+      <Reveal className="md:pl-12">
+        <h3 className="text-2xl font-semibold text-paper sm:text-3xl">{entry.title}</h3>
+        <p className="mt-1 font-mono text-xs uppercase tracking-wider text-ember-2">{entry.place}</p>
+        {entry.points.length > 0 && (
+          <ul className="mt-5 max-w-2xl space-y-2.5 leading-relaxed text-paper/70">
+            {entry.points.map((point) => (
+              <li key={point} className="flex gap-3">
+                <span className="mt-[0.1rem] text-ember" aria-hidden="true">→</span>
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Reveal>
+    </li>
+  );
+}
 
 export default Resume;
