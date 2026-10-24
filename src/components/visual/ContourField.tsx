@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { rgba, useTheme } from "@/lib/theme";
 import { useFrameLoop, useInView, usePageVisible, useReducedMotion } from "@/lib/motion";
 import { useCovered } from "@/lib/covered";
 
@@ -32,8 +33,8 @@ const field = (x: number, y: number, t: number) => {
 
 interface ContourFieldProps {
   className?: string;
-  /** Base line colour. */
-  color?: string;
+  /** Line opacity. The colour itself follows the theme's paper token. */
+  alpha?: number;
   /** Light the lines up around the cursor. */
   interactive?: boolean;
   /** Receives the pointer as 0–1 across the canvas, or null when it leaves. */
@@ -42,7 +43,7 @@ interface ContourFieldProps {
 
 export function ContourField({
   className,
-  color = "rgba(243, 241, 234, 0.09)",
+  alpha = 0.09,
   interactive = false,
   onPointer,
 }: ContourFieldProps) {
@@ -50,6 +51,11 @@ export function ContourField({
   const inView = useInView(canvasRef, { once: false, rootMargin: "0px" });
   const visible = usePageVisible();
   const reduced = useReducedMotion();
+  const { theme } = useTheme();
+  // Resolved once per theme switch, not once per frame. `theme` isn't read
+  // inside, but a switch changes what the CSS token resolves to.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const color = useMemo(() => rgba("--paper-rgb", alpha), [alpha, theme]);
   const pointer = useRef<{ x: number; y: number; on: boolean }>({ x: -9999, y: -9999, on: false });
   const glow = useRef(0);
   const last = useRef(0);

@@ -1,34 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/lib/theme";
 import { CONTACT, NAV, PROFILE } from "@/data/profile";
-
-/** Tracks which section is under the bar, for the active indicator. */
-function useActiveSection(ids: string[]) {
-  const [active, setActive] = useState<string | null>(null);
-  useEffect(() => {
-    const elements = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
-    if (!elements.length) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) if (entry.isIntersecting) setActive(entry.target.id);
-      },
-      // A thin band across the upper third of the screen decides the winner.
-      { rootMargin: "-30% 0px -65% 0px" },
-    );
-    elements.forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
-  }, [ids]);
-  return active;
-}
-
-const SECTION_IDS = NAV.map((item) => item.href.slice(1));
 
 const Navigation = ({ ready = true }: { ready?: boolean }) => {
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [solid, setSolid] = useState(false);
-  const active = useActiveSection(SECTION_IDS);
+  const { pathname } = useLocation();
+
+  // A new page starts at the top, so the bar comes back with it.
+  useEffect(() => setHidden(false), [pathname]);
 
   // Hide while scrolling down, return on the way up — the bar never covers a heading you're reading.
   useEffect(() => {
@@ -53,87 +37,90 @@ const Navigation = ({ ready = true }: { ready?: boolean }) => {
   return (
     <>
       <a
-        href="#work"
+        href="#main"
         className="label fixed left-4 top-4 z-[70] -translate-y-24 bg-ember px-3 py-2 text-ink focus:translate-y-0"
       >
-        Skip to work
+        Skip to content
       </a>
 
       <header
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-[transform,background-color,border-color] duration-500 ease-out",
           "border-b",
-          solid ? "border-line bg-ink/90 backdrop-blur-sm" : "border-transparent bg-transparent",
+          solid ? "border-line bg-ink/70 backdrop-blur-md" : "border-transparent bg-transparent",
           hidden && !open && "-translate-y-full",
           !ready && "opacity-0",
         )}
         style={{ transitionProperty: "transform, background-color, border-color, opacity" }}
       >
         <div className="shell flex h-[var(--nav-h)] items-center justify-between">
-          <a href="#top" className="group flex items-center gap-3" aria-label={`${PROFILE.brand} — back to top`}>
+          <Link to="/" className="group flex items-center gap-3" aria-label={`${PROFILE.brand} — home`}>
             <Monogram />
             <span className="font-display text-lg uppercase tracking-wide text-paper">
               Codex<span className="text-ember">/</span>Prime
             </span>
-          </a>
+          </Link>
 
-          <nav aria-label="Primary" className="absolute left-1/2 hidden -translate-x-1/2 lg:block">
-            <ul className="flex items-center gap-10">
-              {NAV.map((item) => {
-                const isActive = active === item.href.slice(1);
-                return (
-                  <li key={item.href}>
-                    <a
-                      href={item.href}
-                      aria-current={isActive ? "true" : undefined}
-                      className={cn(
-                        "group relative flex items-baseline gap-1.5 py-2 text-sm transition-colors",
-                        isActive ? "text-paper" : "text-dim hover:text-paper",
-                      )}
-                    >
-                      
-                      <span className="font-mono text-[0.65rem] text-ember">{item.index}</span>
-                      {item.label}
-                      <span
-                        className={cn(
-                          "absolute -bottom-0.5 left-0 h-px w-full origin-left bg-ember transition-transform duration-500 ease-out",
-                          isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
-                        )}
-                      />
-                    </a>
-                  </li>
-                );
-              })}
+          {/* The frosted bar: the page you're on is a solid ember block. */}
+          <nav aria-label="Primary" className="glass absolute left-1/2 hidden -translate-x-1/2 p-1 lg:block">
+            <ul className="flex items-center gap-1">
+              {NAV.map((item) => (
+                <li key={item.href}>
+                  <NavLink
+                    to={item.href}
+                    end={item.href === "/"}
+                    className={({ isActive }) =>
+                      cn(
+                        "flex items-baseline gap-1.5 px-4 py-2 text-sm transition-colors duration-300",
+                        isActive ? "bg-ember text-ink" : "text-paper/70 hover:bg-paper/10 hover:text-paper",
+                      )
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <span className={cn("font-mono text-[0.65rem]", isActive ? "text-ink/70" : "text-ember")}>
+                          {item.index}
+                        </span>
+                        {item.label}
+                      </>
+                    )}
+                  </NavLink>
+                </li>
+              ))}
             </ul>
           </nav>
 
-          <a
-            href={PROFILE.resumeUrl}
-            download
-            className="hidden items-center gap-2 font-mono text-xs uppercase tracking-wider text-paper transition-colors hover:text-ember lg:flex"
-          >
-            <span aria-hidden="true" className="text-ember">[</span>
-            Résumé
-            <span aria-hidden="true">↓</span>
-            <span aria-hidden="true" className="text-ember">]</span>
-            <span className="sr-only">(PDF)</span>
-          </a>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <a
+              href={PROFILE.resumeUrl}
+              download
+              className="hidden items-center gap-2 font-mono text-xs uppercase tracking-wider text-paper transition-colors hover:text-ember lg:flex"
+            >
+              <span aria-hidden="true" className="text-ember">[</span>
+              Résumé
+              <span aria-hidden="true">↓</span>
+              <span aria-hidden="true" className="text-ember">]</span>
+              <span className="sr-only">(PDF)</span>
+            </a>
 
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="-mr-2 flex h-11 w-11 flex-col items-center justify-center gap-[6px] lg:hidden"
-            aria-label="Open menu"
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-          >
-            <span className="h-px w-6 bg-paper" />
-            <span className="h-px w-6 bg-paper" />
-          </button>
+            <ThemeToggle />
+
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="-mr-2 flex h-11 w-11 flex-col items-center justify-center gap-[6px] lg:hidden"
+              aria-label="Open menu"
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+            >
+              <span className="h-px w-6 bg-paper" />
+              <span className="h-px w-6 bg-paper" />
+            </button>
+          </div>
         </div>
       </header>
 
-      {open && <MobileMenu active={active} onClose={() => setOpen(false)} />}
+      {open && <MobileMenu onClose={() => setOpen(false)} />}
     </>
   );
 };
@@ -142,7 +129,7 @@ const Navigation = ({ ready = true }: { ready?: boolean }) => {
  * The phone menu: a full-screen dialog, portalled to <body> so no transformed
  * ancestor can pin it inside the header.
  */
-function MobileMenu({ active, onClose }: { active: string | null; onClose: () => void }) {
+function MobileMenu({ onClose }: { onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const [shown, setShown] = useState(false);
@@ -222,17 +209,20 @@ function MobileMenu({ active, onClose }: { active: string | null; onClose: () =>
                 transitionDelay: `${120 + i * 60}ms`,
               }}
             >
-              <a
-                href={item.href}
+              <NavLink
+                to={item.href}
+                end={item.href === "/"}
                 onClick={onClose}
-                className={cn(
-                  "flex items-baseline gap-4 border-b border-line py-3 font-display text-5xl uppercase leading-none transition-colors",
-                  active === item.href.slice(1) ? "text-ember" : "text-paper hover:text-ember",
-                )}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-baseline gap-4 border-b border-line py-3 font-display text-5xl uppercase leading-none transition-colors",
+                    isActive ? "text-ember" : "text-paper hover:text-ember",
+                  )
+                }
               >
                 <span className="font-mono text-xs text-dim">{item.index}</span>
                 {item.label}
-              </a>
+              </NavLink>
             </li>
           ))}
         </ul>
@@ -251,6 +241,42 @@ function MobileMenu({ active, onClose }: { active: string | null; onClose: () =>
       </div>
     </div>,
     document.body,
+  );
+}
+
+/** Sun while dark (tap for light), moon while light (tap for dark). */
+function ThemeToggle() {
+  const { theme, toggle } = useTheme();
+  const light = theme === "light";
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      className="glass group flex h-10 w-10 items-center justify-center text-paper transition-colors hover:text-ember"
+      aria-label={light ? "Switch to dark theme" : "Switch to light theme"}
+      title={light ? "Dark theme" : "Light theme"}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        className="h-[1.1rem] w-[1.1rem] transition-transform duration-500 ease-out group-hover:rotate-45"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        aria-hidden="true"
+      >
+        {light ? (
+          <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" strokeLinejoin="round" />
+        ) : (
+          <>
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"
+              strokeLinecap="round"
+            />
+          </>
+        )}
+      </svg>
+    </button>
   );
 }
 

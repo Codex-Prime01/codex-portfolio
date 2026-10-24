@@ -15,17 +15,17 @@ const Projects = () => {
   const [sabageo, nuesa, quantum, vendigo, bank] = PROJECTS;
 
   return (
-    <section id="work" aria-labelledby="work-title" className="relative bg-ink pb-24 pt-24 sm:pt-32">
+    <section id="work" aria-labelledby="work-title" className="relative bg-ink pb-14 pt-14 sm:pb-24 sm:pt-32">
       <div className="shell">
         <SectionHead index="02" title="Selected work" id="work-title" aside={`${String(PROJECTS.length).padStart(2, "0")} projects + archive`} />
 
         <Featured project={sabageo} />
 
-        <div className="mt-28 grid gap-x-6 gap-y-20 sm:mt-40 lg:grid-cols-12">
+        <div className="mt-16 grid gap-x-6 gap-y-14 sm:gap-y-20 sm:mt-40 lg:grid-cols-12">
           <ImageCase project={nuesa} className="lg:col-span-12" />
         </div>
 
-        <div className="mt-28 grid gap-6 sm:mt-40 md:grid-cols-2">
+        <div className="mt-16 grid gap-6 sm:mt-40 md:grid-cols-2">
           <TypeCase project={quantum} />
           <TypeCase project={vendigo} offset />
         </div>
@@ -41,7 +41,7 @@ const Projects = () => {
 /** Section heading: index, a huge title and a short aside, over a drawn rule. */
 export function SectionHead({ index, title, id, aside }: { index: string; title: string; id: string; aside?: string }) {
   return (
-    <header className="mb-16 sm:mb-24">
+    <header className="mb-10 sm:mb-24">
       <div className="mb-6 flex items-end justify-between gap-6">
         <p className="label">
           <span className="text-ember">({index})</span>
@@ -96,7 +96,7 @@ function Tags({ items }: { items: string[] }) {
 /** 01 — SABAGeo, the long-form case. */
 function Featured({ project }: { project: Project }) {
   return (
-    <article aria-labelledby={`${project.slug}-title`} className="grid gap-12 lg:grid-cols-12 lg:gap-6">
+    <article aria-labelledby={`${project.slug}-title`} className="grid gap-8 sm:gap-12 lg:grid-cols-12 lg:gap-6">
       <div className="lg:col-span-5">
         <div className="lg:sticky lg:top-[calc(var(--nav-h)+2rem)]">
           <Reveal className="flex items-center gap-4">
@@ -132,7 +132,7 @@ function Featured({ project }: { project: Project }) {
           <OverlapDiagram />
         </Reveal>
 
-        <ol className="mt-12 grid gap-x-8 sm:grid-cols-2">
+        <ol className="mt-8 grid gap-x-8 sm:mt-12 sm:grid-cols-2">
           {project.points.map((point, i) => (
             <Reveal as="li" key={point} delay={i * 90} className="border-t border-line py-6">
               <span className="font-mono text-xs text-ember">0{i + 1} /</span>
@@ -245,7 +245,7 @@ function TypeCase({ project, offset }: { project: Project; offset?: boolean }) {
 function CodeCase({ project }: { project: Project }) {
   const code = project.code;
   return (
-    <article aria-labelledby={`${project.slug}-title`} className="mt-28 grid gap-10 sm:mt-40 lg:grid-cols-12 lg:gap-6">
+    <article aria-labelledby={`${project.slug}-title`} className="mt-16 grid gap-10 sm:mt-40 lg:grid-cols-12 lg:gap-6">
       <div className="flex flex-col justify-center lg:col-span-4">
         <Reveal className="flex items-center gap-4">
           <span className="font-mono text-sm text-ember">{project.index}</span>
@@ -321,7 +321,7 @@ function Archive() {
   };
 
   return (
-    <div className="mt-32 sm:mt-44">
+    <div className="mt-20 sm:mt-44">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <SplitText as="h3" text="Archive" by="letter" className="display block text-5xl text-paper sm:text-8xl" />
         <p className="label max-w-xs">Earlier builds — smaller, but they're where it started.</p>

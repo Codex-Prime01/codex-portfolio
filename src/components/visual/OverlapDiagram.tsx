@@ -81,7 +81,7 @@ export function OverlapDiagram({ className }: { className?: string }) {
         </g>
 
         {/* Registered plot, with beacons at its corners */}
-        <path d={REGISTERED} fill="rgba(243,241,234,0.04)" stroke="var(--paper)" strokeWidth="1.5" />
+        <path d={REGISTERED} fill="rgb(var(--paper-rgb) / 0.04)" stroke="var(--paper)" strokeWidth="1.5" />
         {[
           [120, 110],
           [330, 82],

@@ -10,7 +10,6 @@
     />
     <meta name="author" content="Samaila Ibrahim Peter" />
     <meta name="theme-color" content="#08080A" />
-    <link rel="canonical" href="https://codexprime-portfolio.lovable.app/" />
 
     <meta property="og:title" content="Samaila Peter — Codex Prime" />
     <meta
@@ -18,8 +17,19 @@
       content="Backend developer building with Python, Django and PostgreSQL. Builder of SABAGeo, a Web-GIS land registry."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://codexprime-portfolio.lovable.app/" />
     <meta name="twitter:card" content="summary" />
+
+    <!-- Set the theme before first paint, so light mode never flashes dark. -->
+    <script>
+      (function () {
+        var theme;
+        try { theme = localStorage.getItem("cp-theme"); } catch (e) {}
+        if (theme !== "light" && theme !== "dark") {
+          theme = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate icon" href="/favicon.ico" />

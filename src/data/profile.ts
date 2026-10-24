@@ -307,10 +307,11 @@ export const CERTIFICATIONS = [
 ] as const;
 
 /** `index` matches the section's own number on the page; the hero is 01. */
+/** One entry per page. The map lives on the About page. */
 export const NAV = [
-  { label: "Work", href: "#work", index: "02" },
-  { label: "About", href: "#about", index: "03" },
-  { label: "Map", href: "#ground", index: "04" },
-  { label: "Journey", href: "#journey", index: "05" },
-  { label: "Contact", href: "#contact", index: "06" },
+  { label: "Home", href: "/", index: "01" },
+  { label: "Work", href: "/work", index: "02" },
+  { label: "About", href: "/about", index: "03" },
+  { label: "Journey", href: "/journey", index: "04" },
+  { label: "Contact", href: "/contact", index: "05" },
 ] as const;

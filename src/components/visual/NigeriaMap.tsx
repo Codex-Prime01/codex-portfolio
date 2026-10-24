@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { prefersReducedMotion } from "@/lib/motion";
+import { cssVar, rgba, useTheme } from "@/lib/theme";
 import { MAP, PLACES, ROUTE, insideNigeria } from "@/data/nigeria";
 
 /**
@@ -36,6 +37,7 @@ const easeInOutSine = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
 export function NigeriaMap({ className }: { className?: string }) {
   const frameRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { theme } = useTheme();
   const routeRef = useRef<SVGPathElement>(null);
   const headRef = useRef<SVGGElement>(null);
   const [progress, setProgress] = useState(0);
@@ -134,6 +136,8 @@ export function NigeriaMap({ className }: { className?: string }) {
     if (!canvas || !context) return;
 
     const baked = document.createElement("canvas");
+    const dotColor = rgba("--paper-rgb", 0.32);
+    const heatColors = [cssVar("--paper"), cssVar("--ember-2"), cssVar("--ember")];
     let scale = 1;
     const pointer = { x: 0, y: 0, on: false };
     let heat = 0;
@@ -151,7 +155,7 @@ export function NigeriaMap({ className }: { className?: string }) {
       const bctx = baked.getContext("2d");
       if (!bctx) return;
       bctx.setTransform(scale, 0, 0, scale, 0, 0);
-      bctx.fillStyle = "rgba(243, 241, 234, 0.32)";
+      bctx.fillStyle = dotColor;
       bctx.beginPath();
       for (const dot of dots.list) {
         bctx.moveTo(dot.x + DOT_R, dot.y);
@@ -197,7 +201,7 @@ export function NigeriaMap({ className }: { className?: string }) {
         if ((dot.col + dot.row) & 1) continue;
         const t = Math.min(1, (level - THRESHOLD) / (1 - THRESHOLD));
         const side = PITCH * (0.7 + 0.3 * t);
-        context.fillStyle = level > 0.75 ? "#f3f1ea" : level > 0.5 ? "#ff6a3d" : "#ff3b1d";
+        context.fillStyle = level > 0.75 ? heatColors[0] : level > 0.5 ? heatColors[1] : heatColors[2];
         context.fillRect(dot.x - side / 2, dot.y - side / 2, side, side);
       }
     };
@@ -241,7 +245,8 @@ export function NigeriaMap({ className }: { className?: string }) {
       canvas.removeEventListener("pointermove", move);
       canvas.removeEventListener("pointerleave", leave);
     };
-  }, [dots, routeDone]);
+    // theme: re-bake the dots in the new colours after a switch.
+  }, [dots, routeDone, theme]);
 
   const travelled = length * progress;
 
@@ -276,7 +281,7 @@ export function NigeriaMap({ className }: { className?: string }) {
         />
 
         {/* The route: a dim full line, the travelled part over it */}
-        <path d={ROUTE} fill="none" stroke="rgba(243,241,234,0.12)" strokeWidth="2" strokeDasharray="4 6" />
+        <path d={ROUTE} fill="none" stroke="var(--line)" strokeWidth="2" strokeDasharray="4 6" />
         <path
           ref={routeRef}
           d={ROUTE}
@@ -290,7 +295,7 @@ export function NigeriaMap({ className }: { className?: string }) {
         />
         <g ref={headRef} style={{ opacity: progress > 0 && progress < 1 ? 1 : 0, transition: "opacity 0.4s" }}>
           <circle r="16" fill="rgba(255,106,61,0.25)" />
-          <circle r="5" fill="#f3f1ea" />
+          <circle r="5" fill="var(--paper)" />
         </g>
 
         {PLACES.map((place, i) => {

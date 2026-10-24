@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { prefersReducedMotion } from "@/lib/motion";
+import { cssVar, useTheme } from "@/lib/theme";
 
 /**
  * A seam between two blocks: the surface above carries into the block below
@@ -20,8 +21,10 @@ const hash = (x: number, y: number) => {
   return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
 };
 
-export function ChequerSeam({ carry = "#08080a", accent = "#ff6a3d" }: { carry?: string; accent?: string }) {
+/** Colours are token names ("--ink-2"), so the seam follows the theme. */
+export function ChequerSeam({ carry = "--ink", accent = "--ember-2" }: { carry?: string; accent?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -34,6 +37,8 @@ export function ChequerSeam({ carry = "#08080a", accent = "#ff6a3d" }: { carry?:
 
     let frame = 0;
     let lastProgress = -1;
+    const carryColor = cssVar(carry);
+    const accentColor = cssVar(accent);
 
     const render = (progress: number) => {
       const width = canvas.clientWidth;
@@ -60,7 +65,7 @@ export function ChequerSeam({ carry = "#08080a", accent = "#ff6a3d" }: { carry?:
             if ((x + y) % 2 !== 0) continue;
             if (hash(x, y) > fade) continue;
           }
-          context.fillStyle = !solid && hash(x + 101, y + 57) < ACCENT_SHARE ? accent : carry;
+          context.fillStyle = !solid && hash(x + 101, y + 57) < ACCENT_SHARE ? accentColor : carryColor;
           context.fillRect(x * cell, y * cell, cell, cell);
         }
       }
@@ -92,13 +97,14 @@ export function ChequerSeam({ carry = "#08080a", accent = "#ff6a3d" }: { carry?:
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };
-  }, [carry, accent]);
+    // theme: the tokens resolve to new colours after a switch.
+  }, [carry, accent, theme]);
 
   return (
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 top-0 z-20 h-[32svh] w-full"
+      className="pointer-events-none absolute inset-x-0 top-0 z-20 h-[18svh] w-full sm:h-[32svh]"
     />
   );
 }

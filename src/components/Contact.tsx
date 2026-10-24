@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { SplitText } from "@/components/motion/SplitText";
 import { Reveal } from "@/components/motion/Reveal";
@@ -23,12 +24,12 @@ const Contact = () => {
 
       <div className="relative isolate overflow-hidden bg-ink-2">
         <div className="absolute inset-0 -z-10">
-          <ContourField color="rgba(243, 241, 234, 0.06)" />
+          <ContourField alpha={0.06} />
         </div>
 
-        <div className="shell pb-10 pt-[34svh]">
+        <div className="shell pb-10 pt-14 sm:pt-[24svh]">
           <p className="label">
-            <span className="text-ember">(06)</span> — Contact
+            <span className="text-ember">(05)</span> — Contact
           </p>
 
           <h2 id="contact-title" className="mt-6" aria-label="Let's build something.">
@@ -42,7 +43,7 @@ const Contact = () => {
             />
           </h2>
 
-          <div className="mt-16 grid gap-16 lg:grid-cols-12 lg:gap-6">
+          <div className="mt-10 grid gap-10 sm:mt-16 sm:gap-16 lg:grid-cols-12 lg:gap-6">
             <div className="lg:col-span-6">
               <Reveal>
                 <p className="max-w-[36ch] text-lg leading-snug sm:text-xl text-paper/85">
@@ -208,7 +209,7 @@ function MessageForm() {
 
 function Footer() {
   return (
-    <footer className="mt-28 border-t border-line pt-8">
+    <footer className="mt-16 sm:mt-28 border-t border-line pt-8">
       <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
         <div className="flex items-center gap-3">
           <Monogram />
@@ -221,19 +222,23 @@ function Footer() {
           <ul className="flex flex-col md:items-end">
             {NAV.map((item, i) => (
               <li key={item.href} className="border-b border-line md:border-0">
-                <a
-                  href={item.href}
+                <Link
+                  to={item.href}
                   className="group flex items-baseline justify-between gap-4 py-2 font-display text-3xl uppercase leading-none text-paper transition-colors hover:text-ember sm:text-4xl md:justify-end"
                 >
                   <span className="font-mono text-[0.65rem] text-dim md:order-2">{item.index}</span>
                   <SplitText by="letter" text={item.label} delay={260 + i * 80} stagger={22} />
-                </a>
+                </Link>
               </li>
             ))}
             <li>
-              <a href="#top" className="label mt-4 inline-block text-ember hover:text-paper">
+              <button
+                type="button"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="label mt-4 inline-block text-ember hover:text-paper"
+              >
                 Back to top ↑
-              </a>
+              </button>
             </li>
           </ul>
         </nav>
