@@ -310,8 +310,8 @@ export const CERTIFICATIONS = [
 /** One entry per page. The map lives on the About page. */
 export const NAV = [
   { label: "Home", href: "/", index: "01" },
-  { label: "Work", href: "/work", index: "02" },
-  { label: "About", href: "/about", index: "03" },
+  { label: "About", href: "/about", index: "02" },
+  { label: "Work", href: "/work", index: "03" },
   { label: "Journey", href: "/journey", index: "04" },
   { label: "Contact", href: "/contact", index: "05" },
 ] as const;

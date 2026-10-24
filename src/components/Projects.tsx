@@ -17,7 +17,7 @@ const Projects = () => {
   return (
     <section id="work" aria-labelledby="work-title" className="relative bg-ink pb-14 pt-14 sm:pb-24 sm:pt-32">
       <div className="shell">
-        <SectionHead index="02" title="Selected work" id="work-title" aside={`${String(PROJECTS.length).padStart(2, "0")} projects + archive`} />
+        <SectionHead index="03" title="Selected work" id="work-title" aside={`${String(PROJECTS.length).padStart(2, "0")} projects + archive`} />
 
         <Featured project={sabageo} />
 

@@ -6,7 +6,7 @@ const AboutPage = () => (
   <div className="pt-[var(--nav-h)]">
     <About />
     <GroundCovered />
-    <NextPage to="/journey" label="Journey" index="04" />
+    <NextPage to="/work" label="Selected work" index="03" />
   </div>
 );
 

@@ -138,7 +138,7 @@ const Hero = ({ ready }: { ready: boolean }) => {
           />
 
           <Reveal play={ready} delay={1000} className="mt-6 hidden flex-col items-start gap-3 lg:flex">
-            <ChamferLink to="/work">View selected work</ChamferLink>
+            <ChamferLink to="/about">Get to know me</ChamferLink>
             <a href={PROFILE.resumeUrl} download className="label link-underline text-paper hover:text-ember">
               or download the résumé (PDF) ↓
             </a>
@@ -206,7 +206,7 @@ const Hero = ({ ready }: { ready: boolean }) => {
           </Reveal>
 
           <div className="mt-6 flex flex-col gap-3 lg:hidden">
-            <ChamferLink to="/work">View selected work</ChamferLink>
+            <ChamferLink to="/about">Get to know me</ChamferLink>
             <Availability />
           </div>
 

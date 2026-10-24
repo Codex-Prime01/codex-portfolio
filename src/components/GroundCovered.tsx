@@ -7,7 +7,7 @@ import { ChequerSeam } from "@/components/visual/ChequerSeam";
 import { PROFILE } from "@/data/profile";
 
 /**
- * (03) Ground covered — the places behind the work, on a halftone map.
+ * (02) Ground covered — the places behind the work, on a halftone map.
  * The F1 brief's "season so far" circuit, rebuilt around Perey's own route.
  */
 const GroundCovered = () => (
@@ -19,7 +19,7 @@ const GroundCovered = () => (
       <div className="flex flex-col justify-between gap-10 lg:col-span-4">
         <div>
           <p className="label">
-            <span className="text-ember">(03)</span> — Map
+            <span className="text-ember">(02)</span> — Map
           </p>
           <h2 id="ground-title" className="mt-5" aria-label="Ground covered.">
             <SplitText

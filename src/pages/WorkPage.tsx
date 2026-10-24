@@ -7,7 +7,7 @@ const WorkPage = () => (
     <Projects />
     <Marquee />
     <div className="pt-10 sm:pt-16">
-      <NextPage to="/about" label="About" index="03" />
+      <NextPage to="/journey" label="Journey" index="04" />
     </div>
   </div>
 );

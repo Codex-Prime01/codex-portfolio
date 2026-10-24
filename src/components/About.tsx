@@ -14,7 +14,7 @@ const About = () => {
   return (
     <section id="about" aria-labelledby="about-title" className="relative bg-ink-2 py-14 sm:py-32">
       <div className="shell">
-        <SectionHead index="03" title="About" id="about-title" aside={PROFILE.fullName} />
+        <SectionHead index="02" title="About" id="about-title" aside={PROFILE.fullName} />
 
         <div className="grid gap-8 sm:gap-12 lg:grid-cols-12 lg:gap-6">
           <div className="lg:col-span-6">
