@@ -1,0 +1,16 @@
+# Netlify build settings — Netlify reads this file automatically.
+
+[build]
+  # npm ci installs exactly what package-lock.json says, so the build matches local.
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# The site is a single-page app: /work, /about etc. only exist in React Router.
+# Serve index.html for every path so a refresh or a shared link never 404s.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

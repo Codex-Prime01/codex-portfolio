@@ -28,16 +28,17 @@ export default {
 			},
 			colors: {
 				// Codex Prime palette — the raw tokens live in index.css.
+				// Channels + <alpha-value> so opacity modifiers (text-paper/70) work.
 				ink: {
-					DEFAULT: 'var(--ink)',
-					2: 'var(--ink-2)',
-					3: 'var(--ink-3)'
+					DEFAULT: 'rgb(var(--ink-rgb) / <alpha-value>)',
+					2: 'rgb(var(--ink-2-rgb) / <alpha-value>)',
+					3: 'rgb(var(--ink-3-rgb) / <alpha-value>)'
 				},
-				paper: 'var(--paper)',
-				dim: 'var(--dim)',
+				paper: 'rgb(var(--paper-rgb) / <alpha-value>)',
+				dim: 'rgb(var(--dim-rgb) / <alpha-value>)',
 				ember: {
-					DEFAULT: 'var(--ember)',
-					2: 'var(--ember-2)'
+					DEFAULT: 'rgb(var(--ember-rgb) / <alpha-value>)',
+					2: 'rgb(var(--ember-2-rgb) / <alpha-value>)'
 				},
 				line: {
 					DEFAULT: 'var(--line)',

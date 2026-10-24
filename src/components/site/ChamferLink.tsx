@@ -1,4 +1,5 @@
 import type { AnchorHTMLAttributes, ReactNode } from "react";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 /**
@@ -13,13 +14,17 @@ interface ChamferLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   children: ReactNode;
   variant?: "solid" | "ghost";
   arrow?: "right" | "down" | "up-right";
+  /** An in-app route. Renders a router link, so the page changes without a reload. */
+  to?: string;
 }
 
-export function ChamferLink({ children, variant = "solid", arrow = "right", className, ...props }: ChamferLinkProps) {
+export function ChamferLink({ children, variant = "solid", arrow = "right", to, className, ...props }: ChamferLinkProps) {
   const external = props.target === "_blank";
+  const Anchor = to ? Link : "a";
   return (
-    <a
+    <Anchor
       {...props}
+      to={to as string}
       rel={external ? "noopener noreferrer" : props.rel}
       className={cn(
         "group relative inline-flex h-14 min-w-[13.75rem] items-center justify-between gap-8 px-6",
@@ -44,7 +49,7 @@ export function ChamferLink({ children, variant = "solid", arrow = "right", clas
       <span className="relative">{children}</span>
       <Arrow direction={arrow} className="relative transition-transform duration-300 group-hover:translate-x-1" />
       {external && <span className="sr-only">(opens in a new tab)</span>}
-    </a>
+    </Anchor>
   );
 }
 

@@ -83,3 +83,14 @@ export function usePageVisible() {
   }, []);
   return visible;
 }
+
+/** Easing curves for hand-run tweens (the home stage has no tween library). */
+export const ease = {
+  inQuad: (t: number) => t * t,
+  outCubic: (t: number) => 1 - (1 - t) ** 3,
+  /** Overshoots a little, then settles. `s` sets how far. */
+  outBack: (t: number, s = 1.70158) => 1 + (s + 1) * (t - 1) ** 3 + s * (t - 1) ** 2,
+};
+
+/** Durations shared by the laptop spin and the chips, so they land together. */
+export const SWITCH = { in: 600, hold: 300, out: 1200 } as const;

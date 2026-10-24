@@ -12,11 +12,11 @@ const About = () => {
   ];
 
   return (
-    <section id="about" aria-labelledby="about-title" className="relative bg-ink-2 py-24 sm:py-32">
+    <section id="about" aria-labelledby="about-title" className="relative bg-ink-2 py-14 sm:py-32">
       <div className="shell">
         <SectionHead index="03" title="About" id="about-title" aside={PROFILE.fullName} />
 
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-6">
+        <div className="grid gap-8 sm:gap-12 lg:grid-cols-12 lg:gap-6">
           <div className="lg:col-span-6">
             <SplitText
               as="p"
@@ -35,7 +35,7 @@ const About = () => {
           </div>
         </div>
 
-        <dl className="mt-20 grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="mt-12 sm:mt-20 grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">
           {facts.map((fact, i) => (
             <Reveal key={fact.term} delay={i * 80} className="bg-ink-2 py-5 pr-6 sm:px-6 lg:first:pl-0">
               <dt className="label">{fact.term}</dt>
@@ -45,7 +45,7 @@ const About = () => {
         </dl>
 
         {/* Numbers */}
-        <ul className="mt-20 grid grid-cols-2 border-t border-line lg:grid-cols-4">
+        <ul className="mt-12 sm:mt-20 grid grid-cols-2 border-t border-line lg:grid-cols-4">
           {STATS.map((stat, i) => (
             <li key={stat.label} className="border-b border-line py-8 pr-4 even:pl-4 lg:border-b-0 lg:border-r lg:px-6 lg:first:pl-0 lg:last:border-r-0">
               <p className="flex items-baseline gap-1">
@@ -60,7 +60,7 @@ const About = () => {
         </ul>
 
         {/* Skills */}
-        <div className="mt-24">
+        <div className="mt-14 sm:mt-24">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <SplitText as="h3" text="Toolbox" by="letter" className="display block text-4xl text-paper sm:text-7xl" />
             <p className="label">Grouped as on my résumé</p>

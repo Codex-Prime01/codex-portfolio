@@ -7,16 +7,59 @@
    ========================================================================== */
 
 @layer base {
+  /* Colours are stored as bare RGB channels so Tailwind can fade them
+     (text-paper/70, bg-ink/80). The named tokens below wrap them. */
+  :root,
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ink-rgb: 8 8 10;
+    --ink-2-rgb: 17 17 20;
+    --ink-3-rgb: 23 23 27;
+    --paper-rgb: 243 241 234;
+    --dim-rgb: 128 127 120;
+    --ember-rgb: 255 59 29;
+    --ember-2-rgb: 255 106 61;
+    /* The laptop's tinted spotlight on the home page. */
+    --stage-glow: rgb(255 59 29 / 0.16);
+  }
+
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --ink-rgb: 243 241 234;
+    --ink-2-rgb: 234 231 222;
+    --ink-3-rgb: 224 220 209;
+    --paper-rgb: 17 17 20;
+    --dim-rgb: 104 102 95;
+    --ember-rgb: 226 50 22;
+    --ember-2-rgb: 240 90 46;
+    --stage-glow: rgb(255 59 29 / 0.14);
+
+    --background: 45 29% 93%;
+    --foreground: 240 8% 7%;
+    --card: 45 20% 89%;
+    --card-foreground: 240 8% 7%;
+    --popover: 45 20% 89%;
+    --popover-foreground: 240 8% 7%;
+    --primary-foreground: 45 29% 93%;
+    --secondary: 45 15% 86%;
+    --secondary-foreground: 240 8% 7%;
+    --muted: 45 15% 86%;
+    --muted-foreground: 48 4% 39%;
+    --accent-foreground: 45 29% 93%;
+    --border: 240 8% 7% / 0.12;
+    --input: 240 8% 7% / 0.26;
+  }
+
   :root {
-    --ink: #08080a;
-    --ink-2: #111114;
-    --ink-3: #17171b;
-    --paper: #f3f1ea;
-    --dim: #807f78;
-    --ember: #ff3b1d;
-    --ember-2: #ff6a3d;
-    --line: rgba(243, 241, 234, 0.1);
-    --line-strong: rgba(243, 241, 234, 0.22);
+    --ink: rgb(var(--ink-rgb));
+    --ink-2: rgb(var(--ink-2-rgb));
+    --ink-3: rgb(var(--ink-3-rgb));
+    --paper: rgb(var(--paper-rgb));
+    --dim: rgb(var(--dim-rgb));
+    --ember: rgb(var(--ember-rgb));
+    --ember-2: rgb(var(--ember-2-rgb));
+    --line: rgb(var(--paper-rgb) / 0.1);
+    --line-strong: rgb(var(--paper-rgb) / 0.22);
 
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-plate: cubic-bezier(0.33, 0, 0, 1);
@@ -272,5 +315,113 @@
     pointer-events: none;
     opacity: 0.05;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* ==========================================================================
+   Theme switch, page changes, and the home stage
+   ========================================================================== */
+
+/* The stage tint can glide between project colours because it's a typed property. */
+@property --glow {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(255 59 29 / 0.16);
+}
+
+@layer components {
+  /* Colours fade only while the theme is switching (class added by theme.tsx). */
+  .theme-switching,
+  .theme-switching *,
+  .theme-switching *::before,
+  .theme-switching *::after {
+    transition:
+      background-color 0.6s var(--ease-out),
+      border-color 0.6s var(--ease-out),
+      color 0.6s var(--ease-out),
+      fill 0.6s var(--ease-out),
+      stroke 0.6s var(--ease-out) !important;
+  }
+
+  /* Each route rises in when you land on it. */
+  .page-in {
+    animation: page-in 0.7s var(--ease-out) both;
+  }
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 1rem, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Home: a radial spotlight behind the laptop, tinted per project. */
+  .stage {
+    --glow: var(--stage-glow);
+    background:
+      radial-gradient(ellipse 55% 50% at 50% 50%, var(--glow) 0%, transparent 70%),
+      var(--ink);
+    transition: --glow 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Frosted glass, used by the nav and the project cards. */
+  .glass {
+    background: rgb(var(--paper-rgb) / 0.05);
+    border: 1px solid rgb(var(--paper-rgb) / 0.12);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+
+  /* Tiny characters drifting up the stage — the "bubbles". */
+  .rise-bit {
+    position: absolute;
+    bottom: -2rem;
+    pointer-events: none;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    color: var(--paper);
+    animation: rise-bit var(--dur, 7s) linear forwards;
+  }
+  @keyframes rise-bit {
+    0% {
+      transform: translate3d(0, 0, 0);
+      opacity: 0;
+    }
+    10%,
+    85% {
+      opacity: var(--o, 0.3);
+    }
+    100% {
+      transform: translate3d(1.5rem, -110svh, 0);
+      opacity: 0;
+    }
+  }
+
+  /* The floating code chips the cursor pushes away. */
+  .chip {
+    position: absolute;
+    pointer-events: none;
+    white-space: nowrap;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    color: var(--paper);
+    will-change: transform;
+  }
+
+  /* Project cards: the index number lifts and tilts on hover, like a can off a shelf. */
+  .stage-card .stage-card-num {
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .stage-card:hover .stage-card-num,
+  .stage-card:focus-visible .stage-card-num {
+    transform: translateY(-0.6rem) rotate(-8deg) scale(1.08);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }

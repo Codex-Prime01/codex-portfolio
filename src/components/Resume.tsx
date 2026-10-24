@@ -48,9 +48,9 @@ const Resume = () => {
   }, []);
 
   return (
-    <section id="journey" aria-labelledby="journey-title" className="relative bg-ink py-24 sm:py-32">
+    <section id="journey" aria-labelledby="journey-title" className="relative bg-ink py-14 sm:py-32">
       <div className="shell">
-        <SectionHead index="05" title="Journey" id="journey-title" aside="Experience · Education · Certifications" />
+        <SectionHead index="04" title="Journey" id="journey-title" aside="Experience · Education · Certifications" />
 
         <div className="relative">
           {/* The rail */}
@@ -64,7 +64,7 @@ const Resume = () => {
             <div ref={markerRef} className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 bg-ember shadow-[0_0_24px_var(--ember)]" />
           </div>
 
-          <ol className="group/list space-y-16 sm:space-y-24">
+          <ol className="group/list space-y-10 sm:space-y-24">
             {JOURNEY.map((entry) => (
               <JourneyRow key={entry.title} entry={entry} />
             ))}
@@ -72,7 +72,7 @@ const Resume = () => {
         </div>
 
         {/* Certifications */}
-        <div className="mt-32">
+        <div className="mt-16 sm:mt-32">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <SplitText as="h3" text="Certified" by="letter" className="display block text-4xl text-paper sm:text-7xl" />
             <p className="label">freeCodeCamp · Cisco Networking Academy</p>
@@ -99,7 +99,7 @@ const Resume = () => {
           </ul>
         </div>
 
-        <Reveal className="mt-20 flex flex-col items-start justify-between gap-6 border-t border-line pt-10 sm:flex-row sm:items-center">
+        <Reveal className="mt-12 sm:mt-20 flex flex-col items-start justify-between gap-6 border-t border-line pt-10 sm:flex-row sm:items-center">
           <p className="max-w-md text-lg text-paper/80">The full picture, on two pages.</p>
           <ChamferLink href={PROFILE.resumeUrl} download arrow="down">
             Download résumé (PDF)
