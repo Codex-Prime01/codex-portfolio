@@ -77,9 +77,9 @@ const Navigation = ({ ready = true }: { ready?: boolean }) => {
             </span>
           </a>
 
-          <nav aria-label="Primary" className="absolute left-1/2 hidden -translate-x-1/2 md:block">
+          <nav aria-label="Primary" className="absolute left-1/2 hidden -translate-x-1/2 lg:block">
             <ul className="flex items-center gap-10">
-              {NAV.map((item, i) => {
+              {NAV.map((item) => {
                 const isActive = active === item.href.slice(1);
                 return (
                   <li key={item.href}>
@@ -91,8 +91,8 @@ const Navigation = ({ ready = true }: { ready?: boolean }) => {
                         isActive ? "text-paper" : "text-dim hover:text-paper",
                       )}
                     >
-                      {/* Numbered like the sections themselves — the hero is 01. */}
-                      <span className="font-mono text-[0.65rem] text-ember">0{i + 2}</span>
+                      
+                      <span className="font-mono text-[0.65rem] text-ember">{item.index}</span>
                       {item.label}
                       <span
                         className={cn(
@@ -110,7 +110,7 @@ const Navigation = ({ ready = true }: { ready?: boolean }) => {
           <a
             href={PROFILE.resumeUrl}
             download
-            className="hidden items-center gap-2 font-mono text-xs uppercase tracking-wider text-paper transition-colors hover:text-ember md:flex"
+            className="hidden items-center gap-2 font-mono text-xs uppercase tracking-wider text-paper transition-colors hover:text-ember lg:flex"
           >
             <span aria-hidden="true" className="text-ember">[</span>
             Résumé
@@ -122,7 +122,7 @@ const Navigation = ({ ready = true }: { ready?: boolean }) => {
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="-mr-2 flex h-11 w-11 flex-col items-center justify-center gap-[6px] md:hidden"
+            className="-mr-2 flex h-11 w-11 flex-col items-center justify-center gap-[6px] lg:hidden"
             aria-label="Open menu"
             aria-expanded={open}
             aria-controls="mobile-menu"
@@ -170,7 +170,7 @@ function MobileMenu({ active, onClose }: { active: string | null; onClose: () =>
         }
       }
     };
-    const wide = window.matchMedia("(min-width: 768px)");
+    const wide = window.matchMedia("(min-width: 1024px)");
     const onWide = () => wide.matches && onClose();
     window.addEventListener("keydown", onKey);
     wide.addEventListener("change", onWide);
@@ -230,7 +230,7 @@ function MobileMenu({ active, onClose }: { active: string | null; onClose: () =>
                   active === item.href.slice(1) ? "text-ember" : "text-paper hover:text-ember",
                 )}
               >
-                <span className="font-mono text-xs text-dim">0{i + 2}</span>
+                <span className="font-mono text-xs text-dim">{item.index}</span>
                 {item.label}
               </a>
             </li>

@@ -232,6 +232,37 @@
     }
   }
 
+  /* Map: the survey axes crawl, Biu pings, a place flares once when reached. */
+  .map-crawl {
+    animation: map-crawl 7s linear infinite;
+  }
+  @keyframes map-crawl {
+    to {
+      stroke-dashoffset: -36;
+    }
+  }
+  .map-ping,
+  .map-flare {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .map-ping {
+    animation: map-ping 4.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+  .map-flare {
+    animation: map-ping 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes map-ping {
+    from {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    to {
+      transform: scale(7);
+      opacity: 0;
+    }
+  }
+
   /* Faint film grain over everything, so the black is never flat. */
   .grain::after {
     content: "";

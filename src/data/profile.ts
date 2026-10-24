@@ -306,9 +306,11 @@ export const CERTIFICATIONS = [
   { name: "Python Essentials 2", issuer: "Cisco Networking Academy" },
 ] as const;
 
+/** `index` matches the section's own number on the page; the hero is 01. */
 export const NAV = [
-  { label: "Work", href: "#work" },
-  { label: "About", href: "#about" },
-  { label: "Journey", href: "#journey" },
-  { label: "Contact", href: "#contact" },
+  { label: "Work", href: "#work", index: "02" },
+  { label: "About", href: "#about", index: "03" },
+  { label: "Map", href: "#ground", index: "04" },
+  { label: "Journey", href: "#journey", index: "05" },
+  { label: "Contact", href: "#contact", index: "06" },
 ] as const;

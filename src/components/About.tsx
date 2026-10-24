@@ -22,11 +22,11 @@ const About = () => {
               as="p"
               stagger={35}
               text="I build and ship complete products — from the database and the API to the page the user clicks."
-              className="block text-balance text-3xl font-medium leading-[1.12] text-paper sm:text-4xl lg:text-5xl"
+              className="block text-balance text-2xl font-medium leading-[1.15] text-paper sm:text-4xl lg:text-5xl"
             />
           </div>
 
-          <div className="space-y-6 text-lg leading-relaxed text-paper/75 lg:col-span-5 lg:col-start-8">
+          <div className="space-y-6 text-base leading-relaxed sm:text-lg text-paper/75 lg:col-span-5 lg:col-start-8">
             {PROFILE.about.map((paragraph, i) => (
               <Reveal as="p" key={i} delay={i * 120}>
                 {paragraph}
@@ -49,7 +49,7 @@ const About = () => {
           {STATS.map((stat, i) => (
             <li key={stat.label} className="border-b border-line py-8 pr-4 even:pl-4 lg:border-b-0 lg:border-r lg:px-6 lg:first:pl-0 lg:last:border-r-0">
               <p className="flex items-baseline gap-1">
-                <SplitText by="letter" text={stat.value} delay={i * 120} className="display block text-6xl text-paper sm:text-7xl" />
+                <SplitText by="letter" text={stat.value} delay={i * 120} className="display block text-5xl text-paper sm:text-7xl" />
                 {stat.unit && <span className="font-mono text-sm text-ember">{stat.unit}</span>}
               </p>
               <Reveal delay={200 + i * 120}>
@@ -62,7 +62,7 @@ const About = () => {
         {/* Skills */}
         <div className="mt-24">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-            <SplitText as="h3" text="Toolbox" by="letter" className="display block text-5xl text-paper sm:text-7xl" />
+            <SplitText as="h3" text="Toolbox" by="letter" className="display block text-4xl text-paper sm:text-7xl" />
             <p className="label">Grouped as on my résumé</p>
           </div>
           <ul className="border-t border-line">
@@ -77,7 +77,7 @@ const About = () => {
                   <span className="text-ember">{String(i + 1).padStart(2, "0")}</span>
                   {group.group}
                 </h4>
-                <p className="text-lg leading-relaxed text-paper sm:text-xl">
+                <p className="text-base leading-relaxed text-paper sm:text-xl">
                   {group.items.map((item, j) => (
                     <span key={item}>
                       <span className="whitespace-nowrap">{item}</span>

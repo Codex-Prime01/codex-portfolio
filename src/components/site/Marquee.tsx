@@ -19,7 +19,7 @@ const RUN = [
 export function Marquee() {
   const items = RUN.map((word) => (
     <span key={word} className="flex items-center">
-      <span className="px-6 font-display text-4xl uppercase leading-none text-paper sm:px-10 sm:text-6xl">{word}</span>
+      <span className="px-5 font-display text-3xl uppercase leading-none text-paper sm:px-10 sm:text-6xl">{word}</span>
       <svg aria-hidden="true" viewBox="0 0 12 12" className="h-3 w-3 shrink-0 fill-ember sm:h-4 sm:w-4">
         <rect x="2" y="2" width="8" height="8" transform="rotate(45 6 6)" />
       </svg>

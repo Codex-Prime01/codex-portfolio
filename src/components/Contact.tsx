@@ -28,24 +28,24 @@ const Contact = () => {
 
         <div className="shell pb-10 pt-[34svh]">
           <p className="label">
-            <span className="text-ember">(05)</span> — Contact
+            <span className="text-ember">(06)</span> — Contact
           </p>
 
           <h2 id="contact-title" className="mt-6" aria-label="Let's build something.">
-            <SplitText by="letter" stagger={35} text="Let's build" className="display block text-[clamp(3.75rem,14vw,13rem)] text-paper" />
+            <SplitText by="letter" stagger={35} text="Let's build" className="display block text-[clamp(2.75rem,13vw,13rem)] text-paper" />
             <SplitText
               by="letter"
               stagger={35}
               delay={300}
               text="something."
-              className="display block text-[clamp(3.75rem,14vw,13rem)] text-paper [&_.split-unit:last-child]:text-ember"
+              className="display block text-[clamp(2.75rem,13vw,13rem)] text-paper [&_.split-unit:last-child]:text-ember"
             />
           </h2>
 
           <div className="mt-16 grid gap-16 lg:grid-cols-12 lg:gap-6">
             <div className="lg:col-span-6">
               <Reveal>
-                <p className="max-w-[36ch] text-xl leading-snug text-paper/85">
+                <p className="max-w-[36ch] text-lg leading-snug sm:text-xl text-paper/85">
                   {PROFILE.lookingFor}, remote or on-site. Freelance briefs welcome too — tell me the timeline and budget and
                   I'll reply faster.
                 </p>
@@ -216,17 +216,22 @@ function Footer() {
             Codex<span className="text-ember">/</span>Prime
           </p>
         </div>
-        <nav aria-label="Footer">
-          <ul className="flex flex-wrap gap-x-8 gap-y-2">
-            {NAV.map((item) => (
-              <li key={item.href}>
-                <a href={item.href} className="link-underline text-sm text-dim hover:text-paper">
-                  {item.label}
+        {/* The nav as a column of display type, each word resolving letter by letter. */}
+        <nav aria-label="Footer" className="w-full md:w-auto">
+          <ul className="flex flex-col md:items-end">
+            {NAV.map((item, i) => (
+              <li key={item.href} className="border-b border-line md:border-0">
+                <a
+                  href={item.href}
+                  className="group flex items-baseline justify-between gap-4 py-2 font-display text-3xl uppercase leading-none text-paper transition-colors hover:text-ember sm:text-4xl md:justify-end"
+                >
+                  <span className="font-mono text-[0.65rem] text-dim md:order-2">{item.index}</span>
+                  <SplitText by="letter" text={item.label} delay={260 + i * 80} stagger={22} />
                 </a>
               </li>
             ))}
             <li>
-              <a href="#top" className="link-underline text-sm text-ember">
+              <a href="#top" className="label mt-4 inline-block text-ember hover:text-paper">
                 Back to top ↑
               </a>
             </li>

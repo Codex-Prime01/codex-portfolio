@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { SplitText } from "@/components/motion/SplitText";
 import { Reveal } from "@/components/motion/Reveal";
@@ -9,7 +9,9 @@ import { useInView } from "@/lib/motion";
 import { CERTIFICATIONS, JOURNEY, PROFILE } from "@/data/profile";
 
 /** Turns the marker makes over the whole run of the rail. */
-const MARKER_TURNS = 4;
+const MARKER_TURNS = 5;
+/** How long a reached year holds full strength before settling to 40%. */
+const YEAR_HOLD_MS = 2200;
 
 const Resume = () => {
   const railRef = useRef<HTMLDivElement>(null);
@@ -48,7 +50,7 @@ const Resume = () => {
   return (
     <section id="journey" aria-labelledby="journey-title" className="relative bg-ink py-24 sm:py-32">
       <div className="shell">
-        <SectionHead index="04" title="Journey" id="journey-title" aside="Experience · Education · Certifications" />
+        <SectionHead index="05" title="Journey" id="journey-title" aside="Experience · Education · Certifications" />
 
         <div className="relative">
           {/* The rail */}
@@ -62,7 +64,7 @@ const Resume = () => {
             <div ref={markerRef} className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 bg-ember shadow-[0_0_24px_var(--ember)]" />
           </div>
 
-          <ol className="space-y-16 sm:space-y-24">
+          <ol className="group/list space-y-16 sm:space-y-24">
             {JOURNEY.map((entry) => (
               <JourneyRow key={entry.title} entry={entry} />
             ))}
@@ -72,7 +74,7 @@ const Resume = () => {
         {/* Certifications */}
         <div className="mt-32">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-            <SplitText as="h3" text="Certified" by="letter" className="display block text-5xl text-paper sm:text-7xl" />
+            <SplitText as="h3" text="Certified" by="letter" className="display block text-4xl text-paper sm:text-7xl" />
             <p className="label">freeCodeCamp · Cisco Networking Academy</p>
           </div>
           <ul className="grid gap-6 sm:grid-cols-2">
@@ -80,7 +82,7 @@ const Resume = () => {
               <Reveal as="li" key={cert.name} delay={i * 80} className="group relative p-6">
                 <Corners className="text-paper/30 transition-colors duration-500 group-hover:text-ember" />
                 <p className="label">{cert.issuer}</p>
-                <p className="mt-3 font-display text-3xl uppercase leading-none text-paper">{cert.name}</p>
+                <p className="mt-3 font-display text-2xl uppercase leading-none text-paper sm:text-3xl">{cert.name}</p>
                 {"verify" in cert && cert.verify && (
                   <a
                     href={cert.verify}
@@ -112,9 +114,20 @@ function JourneyRow({ entry }: { entry: (typeof JOURNEY)[number] }) {
   const ref = useRef<HTMLLIElement>(null);
   // Lit once the thread (the middle of the screen) reaches it.
   const reached = useInView(ref, { rootMargin: "0px 0px -50% 0px" });
+  // Once reached, the year holds full strength for a beat, then settles back.
+  const [settled, setSettled] = useState(false);
+  useEffect(() => {
+    if (!reached) return;
+    const timer = window.setTimeout(() => setSettled(true), YEAR_HOLD_MS);
+    return () => window.clearTimeout(timer);
+  }, [reached]);
 
   return (
-    <li ref={ref} className="relative grid gap-4 pl-10 md:grid-cols-[30%_1fr] md:gap-0 md:pl-0">
+    <li
+      ref={ref}
+      // Hovering any row dims the rest — only where there is real hover.
+      className="group/row relative grid gap-4 pl-10 transition-opacity duration-700 [transition-timing-function:var(--ease-plate)] md:grid-cols-[30%_1fr] md:gap-0 md:pl-0 [@media(hover:hover)]:group-hover/list:opacity-30 [@media(hover:hover)]:hover:!opacity-100"
+    >
       <span
         aria-hidden="true"
         className={cn(
@@ -125,8 +138,8 @@ function JourneyRow({ entry }: { entry: (typeof JOURNEY)[number] }) {
       <div className="md:pr-12 md:text-right">
         <p
           className={cn(
-            "display text-4xl transition-colors duration-700 sm:text-5xl",
-            reached ? "text-paper" : "text-paper/25",
+            "display text-3xl transition-colors duration-700 sm:text-5xl",
+            !reached ? "text-paper/25" : settled ? "text-paper/40 group-hover/row:text-paper" : "text-paper",
           )}
         >
           {entry.when}
@@ -134,7 +147,7 @@ function JourneyRow({ entry }: { entry: (typeof JOURNEY)[number] }) {
         <p className="label mt-2">{entry.kind}</p>
       </div>
       <Reveal className="md:pl-12">
-        <h3 className="text-2xl font-semibold text-paper sm:text-3xl">{entry.title}</h3>
+        <h3 className="text-xl font-semibold text-paper sm:text-3xl">{entry.title}</h3>
         <p className="mt-1 font-mono text-xs uppercase tracking-wider text-ember-2">{entry.place}</p>
         {entry.points.length > 0 && (
           <ul className="mt-5 max-w-2xl space-y-2.5 leading-relaxed text-paper/70">

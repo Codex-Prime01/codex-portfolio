@@ -55,7 +55,7 @@ export function SectionHead({ index, title, id, aside }: { index: string; title:
         text={title}
         by="letter"
         stagger={30}
-        className="display mt-6 block text-[clamp(3.5rem,13vw,12rem)] text-paper"
+        className="display mt-6 block text-[clamp(2.75rem,12vw,12rem)] text-paper"
       />
     </header>
   );
@@ -112,10 +112,10 @@ function Featured({ project }: { project: Project }) {
             by="letter"
             stagger={40}
             // The project's name is "SABAGeo" — never set it in all caps.
-            className="display mt-5 block text-[clamp(4rem,10vw,9rem)] normal-case text-paper"
+            className="display mt-5 block text-[clamp(3rem,10vw,9rem)] normal-case text-paper"
           />
           <Reveal delay={150}>
-            <p className="mt-6 max-w-[34ch] text-xl leading-snug text-paper/90">{project.summary}</p>
+            <p className="mt-6 max-w-[34ch] text-lg leading-snug sm:text-xl text-paper/90">{project.summary}</p>
           </Reveal>
           <Reveal delay={250} className="mt-8">
             <Tags items={project.tech} />
@@ -185,9 +185,9 @@ function ImageCase({ project, className }: { project: Project; className?: strin
           <span className="font-mono text-sm text-ember">{project.index}</span>
           <span className="label">{project.kind}</span>
         </Reveal>
-        <SplitText as="h3" id={`${project.slug}-title`} text={project.name} className="display mt-4 block text-6xl text-paper sm:text-7xl" />
+        <SplitText as="h3" id={`${project.slug}-title`} text={project.name} className="display mt-4 block text-5xl text-paper sm:text-7xl" />
         <Reveal delay={150}>
-          <p className="mt-5 text-lg leading-snug text-paper/90">{project.summary}</p>
+          <p className="mt-5 text-base leading-snug text-paper/90 sm:text-lg">{project.summary}</p>
           <ul className="mt-6 space-y-3 text-sm leading-relaxed text-paper/70">
             {project.points.map((point) => (
               <li key={point} className="flex gap-3">
@@ -251,9 +251,9 @@ function CodeCase({ project }: { project: Project }) {
           <span className="font-mono text-sm text-ember">{project.index}</span>
           <span className="label">{project.kind}</span>
         </Reveal>
-        <SplitText as="h3" id={`${project.slug}-title`} text={project.name} className="display mt-4 block text-6xl text-paper sm:text-7xl" />
+        <SplitText as="h3" id={`${project.slug}-title`} text={project.name} className="display mt-4 block text-5xl text-paper sm:text-7xl" />
         <Reveal delay={150}>
-          <p className="mt-5 text-lg leading-snug text-paper/90">{project.summary}</p>
+          <p className="mt-5 text-base leading-snug text-paper/90 sm:text-lg">{project.summary}</p>
         </Reveal>
         <Reveal delay={250} className="mt-8 space-y-8">
           <Tags items={project.tech} />
@@ -323,7 +323,7 @@ function Archive() {
   return (
     <div className="mt-32 sm:mt-44">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-        <SplitText as="h3" text="Archive" by="letter" className="display block text-6xl text-paper sm:text-8xl" />
+        <SplitText as="h3" text="Archive" by="letter" className="display block text-5xl text-paper sm:text-8xl" />
         <p className="label max-w-xs">Earlier builds — smaller, but they're where it started.</p>
       </div>
 

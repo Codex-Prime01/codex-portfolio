@@ -4,7 +4,7 @@ import { SplitText } from "@/components/motion/SplitText";
 import { Reveal } from "@/components/motion/Reveal";
 import { ChamferLink } from "@/components/site/ChamferLink";
 import { Corners } from "@/components/site/Intro";
-import { PROFILE, PROJECTS } from "@/data/profile";
+import { PROFILE } from "@/data/profile";
 
 /**
  * Nigeria's rough bounding box. The pointer readout maps the hero onto it,
@@ -17,7 +17,6 @@ const formatCoord = (value: number, positive: string, negative: string) =>
 
 const Hero = ({ ready }: { ready: boolean }) => {
   const readout = useRef<HTMLSpanElement>(null);
-  const latest = PROJECTS[0];
 
   // Written straight to the DOM: a re-render per mouse move would be waste.
   const onPointer = useCallback((point: { x: number; y: number } | null) => {
@@ -59,7 +58,7 @@ const Hero = ({ ready }: { ready: boolean }) => {
 
         {/* Middle: the pitch on the left, the latest build on the right. */}
         <div className="mt-8 grid flex-1 content-center gap-10 md:grid-cols-12 md:gap-6">
-          <div className="md:col-span-7 lg:col-span-6">
+          <div className="md:col-span-8 lg:col-span-6">
             <Reveal play={ready} delay={250}>
               <p className="label mb-5">
                 (01) — {PROFILE.role} · {PROFILE.stack}
@@ -71,32 +70,50 @@ const Hero = ({ ready }: { ready: boolean }) => {
               delay={350}
               stagger={40}
               text={PROFILE.tagline}
-              className="block max-w-[30ch] text-balance text-2xl font-medium leading-[1.15] text-paper sm:text-3xl lg:text-[2.6rem]"
+              className="block max-w-[30ch] text-balance text-xl font-medium leading-[1.2] text-paper sm:text-3xl lg:text-[2.6rem]"
             />
           </div>
 
-          <Reveal play={ready} delay={700} className="md:col-span-5 md:col-start-8 lg:col-span-4 lg:col-start-9 md:self-center">
-            <a href="#work" className="group relative block p-5 sm:p-6">
-              <Corners className="text-paper/60 transition-colors group-hover:text-ember" />
-              <p className="label text-ember">Latest build · {latest.year}</p>
-              <p className="mt-4 font-display text-4xl leading-none">{latest.name}</p>
-              <p className="mt-2 text-sm text-dim">{latest.kind}</p>
-              <ul className="mt-5 space-y-1.5 font-mono text-[0.7rem] uppercase tracking-wider text-paper/80">
-                <li>→ PostGIS overlap detection</li>
-                <li>→ Polygon-anchored records</li>
-                <li>→ Python · PostgreSQL · Leaflet</li>
-              </ul>
-              <span className="label mt-5 flex items-center gap-2 text-paper transition-colors group-hover:text-ember">
-                See the case study <span aria-hidden="true">↓</span>
-              </span>
-            </a>
+          {/* Two small instrument panels. Hidden on phones, where the name and pitch are enough. */}
+          <Reveal
+            play={ready}
+            delay={900}
+            className="hidden gap-4 sm:grid sm:grid-cols-2 md:col-span-4 md:col-start-9 md:grid-cols-1 md:self-center lg:col-span-3 lg:col-start-10"
+          >
+            <div className="relative p-4">
+              <Corners className="text-paper/50" size={10} />
+              <p className="label text-ember">Now</p>
+              <dl className="mt-3 space-y-1 font-mono text-[0.72rem] uppercase leading-snug tracking-wide">
+                <dt className="font-medium text-paper">Open to roles</dt>
+                <dd className="text-paper/70">Backend · SWE · Data</dd>
+                <dd className="text-paper/70">Remote or on-site</dd>
+              </dl>
+            </div>
+            <div className="relative p-4">
+              <Corners className="text-paper/50" size={10} />
+              <p className="label text-ember">By the numbers</p>
+              <dl className="mt-3 grid grid-cols-3 gap-2">
+                {[
+                  { label: "CGPA", value: PROFILE.cgpa },
+                  { label: "Projects", value: "10" },
+                  { label: "Certs", value: "4" },
+                ].map((stat, i) => (
+                  <div key={stat.label} className="flex flex-col-reverse">
+                    <dt className="label mt-1.5 whitespace-nowrap text-[0.6rem]">{stat.label}</dt>
+                    <dd className="font-display text-3xl leading-none text-paper">
+                      <SplitText by="letter" play={ready} delay={1100 + i * 90} stagger={26} text={stat.value} />
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </Reveal>
         </div>
 
         {/* The name, as large as the screen allows. */}
         {/* Two lines on a phone, one line from lg — sized so the hero fits one screen. */}
         <h1
-          className="display mt-10 flex select-none flex-wrap gap-x-[0.18em] text-[clamp(4.5rem,21vw,12rem)] text-paper lg:mt-6 lg:flex-nowrap lg:text-[12.2vw] 2xl:text-[11.5rem]"
+          className="display mt-10 flex select-none flex-wrap gap-x-[0.18em] text-[clamp(3.25rem,17vw,12rem)] text-paper lg:mt-6 lg:flex-nowrap lg:text-[12.2vw] 2xl:text-[11.5rem]"
           aria-label={`${PROFILE.name}, ${PROFILE.brand}`}
         >
           <SplitText by="letter" play={ready} delay={150} stagger={45} text="Samaila" className="block" />
