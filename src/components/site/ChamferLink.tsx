@@ -1,5 +1,5 @@
 import type { AnchorHTMLAttributes, ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { EmberLink } from "@/components/site/EmberBlock";
 import { cn } from "@/lib/utils";
 
 /**
@@ -14,13 +14,13 @@ interface ChamferLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   children: ReactNode;
   variant?: "solid" | "ghost";
   arrow?: "right" | "down" | "up-right";
-  /** An in-app route. Renders a router link, so the page changes without a reload. */
+  /** An in-app route: changes page under the ember block, without a reload. */
   to?: string;
 }
 
 export function ChamferLink({ children, variant = "solid", arrow = "right", to, className, ...props }: ChamferLinkProps) {
   const external = props.target === "_blank";
-  const Anchor = to ? Link : "a";
+  const Anchor = to ? EmberLink : "a";
   return (
     <Anchor
       {...props}

@@ -1,5 +1,4 @@
 import { Suspense, lazy, useMemo, useRef, useState, type CSSProperties } from "react";
-import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/lib/theme";
 import { ContourField } from "@/components/visual/ContourField";
@@ -10,6 +9,7 @@ import { SplitText } from "@/components/motion/SplitText";
 import { Reveal } from "@/components/motion/Reveal";
 import { ChamferLink, Arrow } from "@/components/site/ChamferLink";
 import { Corners } from "@/components/site/Intro";
+import { EmberLink } from "@/components/site/EmberBlock";
 import { PROFILE, PROJECTS } from "@/data/profile";
 
 // three.js is big, so the laptop loads in its own chunk after the page shows.
@@ -189,6 +189,14 @@ const Hero = ({ ready }: { ready: boolean }) => {
                     active === i ? "border-ember bg-ember/10" : "hover:border-paper/40 hover:bg-paper/10",
                   )}
                 >
+                  {/* The ember block marks the chosen build, growing in on the spring. */}
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "absolute right-3 top-3 h-2 w-2 origin-top-right bg-ember transition-transform duration-700 [transition-timing-function:var(--ease-spring)]",
+                      active === i ? "scale-100" : "scale-0",
+                    )}
+                  />
                   <span className="stage-card-num font-display text-4xl leading-none text-ember">{project.index}</span>
                   <span className="mt-6 text-sm font-medium leading-tight text-paper">{project.name}</span>
                   <span className="label mt-1 text-[0.6rem] leading-snug">{project.kind}</span>
@@ -198,9 +206,9 @@ const Hero = ({ ready }: { ready: boolean }) => {
             {/* Where to go once a project has caught your eye. */}
             <p className="label mt-2 h-4 text-left lg:text-right">
               {active >= 0 && (
-                <Link to={`/work#${PROJECTS[active].slug}-title`} className="inline-flex items-center gap-2 text-ember hover:text-paper">
+                <EmberLink to={`/work#${PROJECTS[active].slug}-title`} className="inline-flex items-center gap-2 text-ember hover:text-paper">
                   Open the {PROJECTS[active].name} case study <Arrow />
-                </Link>
+                </EmberLink>
               )}
             </p>
           </Reveal>
@@ -236,7 +244,7 @@ function Availability() {
     <div className="flex items-center gap-4">
       <div className="relative flex h-12 w-12 shrink-0 items-center justify-center">
         <Corners className="text-ember" size={10} />
-        <span className="h-2 w-2 animate-pulse bg-ember" />
+        <span className="h-2 w-2 bg-ember" />
       </div>
       <div className="text-left">
         <p className="label">Open to roles</p>

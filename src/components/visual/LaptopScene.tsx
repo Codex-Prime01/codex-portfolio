@@ -355,6 +355,7 @@ export default function LaptopScene({ slides, active, theme, className }: Laptop
 
     // ---------- Layout ----------
     let panelBaseY = 0;
+    let baseDistance = 9.4;
     const resize = () => {
       const width = host.clientWidth;
       const height = host.clientHeight;
@@ -362,9 +363,7 @@ export default function LaptopScene({ slides, active, theme, className }: Laptop
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
       // Narrow boxes (phones) frame the laptop to ~85% of the width instead.
-      const distance = camera.aspect < 1.25 ? 8.6 / camera.aspect : 9.4;
-      camera.position.set(0, 1.9, distance);
-      camera.lookAt(lookAt);
+      baseDistance = camera.aspect < 1.25 ? 8.6 / camera.aspect : 9.4;
       camera.updateProjectionMatrix();
       // Wide: the log window floats up-left, half behind the lid. Narrow: tucked up-right.
       if (camera.aspect >= 1.25) {
@@ -419,6 +418,8 @@ export default function LaptopScene({ slides, active, theme, className }: Laptop
     let raf = 0;
     let onScreen = true;
     let lastLog = 0;
+    let lastTick = performance.now();
+    let lastAngle = 0;
     if (reduced) typedChars = Number.MAX_SAFE_INTEGER;
 
     const tick = (now: number) => {
@@ -438,7 +439,6 @@ export default function LaptopScene({ slides, active, theme, className }: Laptop
         if (elapsed < SWITCH.in) {
           const t = ease.inQuad(elapsed / SWITCH.in);
           spinAngle = t * Math.PI * 2;
-          renderer.domElement.style.filter = `blur(${t * 6}px)`;
         } else {
           if (!spin.swapped) {
             // Peak of the first turn: swap the screen while it's a blur.
@@ -448,15 +448,28 @@ export default function LaptopScene({ slides, active, theme, className }: Laptop
             typingStart = now;
           }
           const t = Math.min(1, (elapsed - SWITCH.in) / (SWITCH.out + SWITCH.hold));
-          spinAngle = Math.PI * 2 + ease.outBack(t, 0.9) * Math.PI * 2;
-          renderer.domElement.style.filter = t < 0.35 ? `blur(${6 * (1 - t / 0.35)}px)` : "";
+          spinAngle = Math.PI * 2 + ease.spring(t) * Math.PI * 2;
           if (t >= 1) {
             spin = null;
             spinAngle = 0;
-            renderer.domElement.style.filter = "";
+            // Two full turns back to 0 looks identical; don't let it read as speed.
+            lastAngle -= Math.PI * 4;
           }
         }
       }
+
+      // Blur follows speed: radians per second turned into a few pixels, never more than 7.
+      const dt = Math.max(1, now - lastTick) / 1000;
+      const speed = Math.abs(spinAngle - lastAngle) / dt;
+      lastTick = now;
+      lastAngle = spinAngle;
+      const blur = Math.min(7, speed * 0.45);
+      renderer.domElement.style.filter = blur > 0.3 ? `blur(${blur.toFixed(1)}px)` : "";
+
+      // The camera never sits still: a slow push between 1.0 and 1.04, about 20s a breath.
+      const push = reduced ? 1 : 1.02 + Math.sin((time * Math.PI * 2) / 20) * 0.02;
+      camera.position.set(0, 1.9, baseDistance / push);
+      camera.lookAt(lookAt);
 
       const bob = reduced ? 0 : Math.sin(time * ((Math.PI * 2) / 6)) * 0.08;
       rig.position.y = bob;

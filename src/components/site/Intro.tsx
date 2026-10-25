@@ -1,24 +1,25 @@
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { prefersReducedMotion } from "@/lib/motion";
 import { PROFILE } from "@/data/profile";
+import { useEmber } from "@/components/site/EmberBlock";
 
 /**
- * The opening veil.
+ * The opening: the ember block types the hook, then becomes the page change.
  *
- * The meter is honest about what it waits for: it creeps toward 70% while
- * the display fonts load, and only completes once they have — so the hero
- * never flashes in a fallback face. A short minimum keeps it from blinking,
- * a hard backstop means it can never hold the page hostage, and it plays
- * once per visit. Any click or key skips it.
+ * 1. On a dark veil, the block works as a cursor and types "From database to deploy."
+ * 2. Once that's done (and the fonts have loaded), the cursor grows until it
+ *    covers the screen. The veil is removed underneath it.
+ * 3. The block collapses into the active nav item, uncovering the page.
+ *
+ * Plays once per visit. Any click or key skips straight to step 2, and a
+ * hard backstop means it can never hold the page hostage.
  */
 
 const SESSION_KEY = "cp-intro-seen";
-const MIN_MS = 1100;
-const MAX_MS = 3500;
-const CLEAR_MS = 380;
-const LIFT_MS = 900;
-
-type Phase = "loading" | "clearing" | "lifting" | "done";
+const HOOK = "From database to deploy.";
+const CHAR_MS = 42;
+const PAUSE_MS = 380; // a beat to read the line before the block takes over
+const MAX_MS = 4000;
 
 const alreadySeen = () => {
   try {
@@ -30,94 +31,77 @@ const alreadySeen = () => {
 };
 
 export function Intro({ onDone }: { onDone: () => void }) {
-  const [phase, setPhase] = useState<Phase>(() => (alreadySeen() || prefersReducedMotion() ? "done" : "loading"));
-  const meterRef = useRef<HTMLDivElement>(null);
-  const ready = useRef(false);
+  const [phase, setPhase] = useState<"typing" | "leaving" | "done">(() =>
+    alreadySeen() || prefersReducedMotion() ? "done" : "typing",
+  );
+  const [typed, setTyped] = useState(0);
+  const cursorRef = useRef<HTMLSpanElement>(null);
   const doneRef = useRef(onDone);
   doneRef.current = onDone;
+  const { run } = useEmber();
+  const runRef = useRef(run);
+  runRef.current = run;
 
   // Skipped outright: hand over on the first effect.
   useEffect(() => {
     if (phase === "done") doneRef.current();
-    // Only on mount — later "done" transitions call onDone themselves.
+    // Only on mount — the "leaving" path calls onDone itself.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (phase !== "loading") return;
+    if (phase !== "typing") return;
     const html = document.documentElement;
     html.style.overflow = "hidden";
 
     const began = performance.now();
-    let progress = 0;
-    let frame = 0;
-    let finished = false;
+    let left = false;
+    let fontsReady = !document.fonts;
+    document.fonts?.ready
+      .then(() => (fontsReady = true))
+      // Fonts failed: the page still works in the fallback face.
+      .catch(() => (fontsReady = true));
 
-    const finish = () => {
-      if (finished) return;
-      finished = true;
+    const leave = () => {
+      if (left) return;
+      left = true;
       try {
         sessionStorage.setItem(SESSION_KEY, "1");
       } catch {
         /* storage blocked — the intro will simply play again next visit */
       }
-      setPhase("clearing");
-    };
-
-    document.fonts?.ready
-      .then(() => {
-        ready.current = true;
-      })
-      .catch(() => {
-        // Fonts failed: the page still works in the fallback face.
-        ready.current = true;
+      setTyped(HOOK.length);
+      setPhase("leaving");
+      const rect = cursorRef.current?.getBoundingClientRect();
+      const from = rect
+        ? { x: rect.left, y: rect.top, w: rect.width, h: rect.height }
+        : { x: window.innerWidth / 2, y: window.innerHeight / 2, w: 16, h: 16 };
+      void runRef.current(from, () => {
+        html.style.overflow = "";
+        setPhase("done");
+        doneRef.current();
       });
-    if (!document.fonts) ready.current = true;
-
-    const tick = (now: number) => {
-      const elapsed = now - began;
-      const canFinish = ready.current && elapsed > MIN_MS;
-      const target = canFinish ? 1 : 0.7;
-      progress += (target - progress) * (canFinish ? 0.14 : 0.03);
-      if (meterRef.current) meterRef.current.style.transform = `scaleX(${progress})`;
-      if ((canFinish && progress > 0.995) || elapsed > MAX_MS) {
-        finish();
-        return;
-      }
-      frame = requestAnimationFrame(tick);
     };
-    frame = requestAnimationFrame(tick);
 
-    // The backstop runs on its own timer, not inside the frame loop: a
-    // throttled or background tab can starve requestAnimationFrame entirely.
-    const backstop = window.setTimeout(finish, MAX_MS);
+    // Typing runs on a timer, not animation frames: a throttled tab still gets through.
+    const typing = window.setInterval(() => {
+      const elapsed = performance.now() - began;
+      const count = Math.min(HOOK.length, Math.floor(elapsed / CHAR_MS));
+      setTyped(count);
+      if (count === HOOK.length && fontsReady && elapsed > HOOK.length * CHAR_MS + PAUSE_MS) leave();
+    }, 30);
+    const backstop = window.setTimeout(leave, MAX_MS);
 
-    const skip = () => finish();
+    const skip = () => leave();
     window.addEventListener("keydown", skip);
     window.addEventListener("pointerdown", skip);
 
     return () => {
+      window.clearInterval(typing);
       window.clearTimeout(backstop);
-      cancelAnimationFrame(frame);
       window.removeEventListener("keydown", skip);
       window.removeEventListener("pointerdown", skip);
     };
-  }, [phase]);
-
-  useEffect(() => {
-    if (phase === "clearing") {
-      const timer = window.setTimeout(() => {
-        setPhase("lifting");
-        // The page's own entrance starts as the veil begins to lift.
-        doneRef.current();
-      }, CLEAR_MS);
-      return () => window.clearTimeout(timer);
-    }
-    if (phase === "lifting") {
-      document.documentElement.style.overflow = "";
-      const timer = window.setTimeout(() => setPhase("done"), LIFT_MS);
-      return () => window.clearTimeout(timer);
-    }
   }, [phase]);
 
   // Whatever happens, never leave the page locked.
@@ -125,55 +109,35 @@ export function Intro({ onDone }: { onDone: () => void }) {
 
   if (phase === "done") return null;
 
-  const clearing = phase !== "loading";
-
   return (
     <div
       role="status"
       aria-live="polite"
-      aria-label={clearing ? "Loaded" : `Loading ${PROFILE.brand}`}
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-ink"
-      style={{
-        transform: phase === "lifting" ? "translate3d(0,-100%,0)" : "none",
-        transition: `transform ${LIFT_MS}ms cubic-bezier(0.76, 0, 0.24, 1)`,
-      }}
+      aria-label={`Loading ${PROFILE.brand}`}
+      className="fixed inset-0 z-[85] flex flex-col justify-center bg-ink px-[var(--gutter)]"
     >
-      <div
-        className="flex flex-col items-center gap-6"
-        style={{
-          opacity: clearing ? 0 : 1,
-          transform: clearing ? "translate3d(0,-0.75rem,0)" : "none",
-          transition: `opacity ${CLEAR_MS}ms ease, transform ${CLEAR_MS}ms var(--ease-out)`,
-        }}
-      >
-        <div className="relative px-6 py-4">
-          <Corners />
-          <p className="display text-[clamp(2.5rem,12vw,4.5rem)] text-paper" aria-hidden="true">
-            {[..."CODEX PRIME"].map((char, i) => (
-              <span
-                key={i}
-                className="inline-block animate-[intro-rise_0.8s_var(--ease-out)_both]"
-                style={{ animationDelay: `${120 + i * 45}ms` }}
-              >
-                {char === " " ? " " : char}
-              </span>
-            ))}
-          </p>
-        </div>
-        <p className="label animate-[intro-rise_0.8s_var(--ease-out)_both] [animation-delay:600ms]">
-          {PROFILE.name} — {PROFILE.role}
-        </p>
-      </div>
-
-      <div className="absolute inset-x-0 bottom-0 h-1 bg-line">
-        <div ref={meterRef} className="h-full origin-left scale-x-0 bg-ember" />
-      </div>
+      <p className="label mb-6">
+        <span className="text-ember">●</span> {PROFILE.name} — {PROFILE.role}
+      </p>
+      <p className="display max-w-[14ch] text-[clamp(3rem,10vw,9rem)] text-paper" aria-label={HOOK}>
+        {/* Every letter is laid out from the start, so typing never reflows the line. */}
+        {[...HOOK].map((char, i) => (
+          <span key={i} aria-hidden="true" className={i < typed ? undefined : "invisible"}>
+            {char === "." ? <span className="text-ember">.</span> : char}
+            {i === typed - 1 && <Cursor ref={cursorRef} />}
+          </span>
+        ))}
+        {typed === 0 && <Cursor ref={cursorRef} />}
+      </p>
       <p className="label absolute bottom-5 right-[var(--gutter)] hidden sm:block">Click or press any key to skip</p>
-
-      <style>{`@keyframes intro-rise { from { opacity: 0; transform: translateY(0.35em); } to { opacity: 1; transform: none; } }`}</style>
     </div>
   );
 }
+
+/** The block, as a text cursor sitting on the baseline. */
+const Cursor = forwardRef<HTMLSpanElement>(function Cursor(_, ref) {
+  return <span ref={ref} aria-hidden="true" className="ml-[0.06em] inline-block h-[0.72em] w-[0.42em] bg-ember align-baseline" />;
+});
 
 /** Four corner brackets — the same mark used on panels across the site. */
 export function Corners({ className = "text-ember", size = 12 }: { className?: string; size?: number }) {

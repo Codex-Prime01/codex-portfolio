@@ -186,8 +186,8 @@ export function ContourField({
       glow.current += ((p.on ? 1 : 0) - glow.current) * 0.12;
       if (interactive && glow.current > 0.01) {
         const gradient = context.createRadialGradient(p.x, p.y, 0, p.x, p.y, GLOW_RADIUS);
-        gradient.addColorStop(0, `rgba(255, 106, 61, ${0.95 * glow.current})`);
-        gradient.addColorStop(0.45, `rgba(255, 59, 29, ${0.45 * glow.current})`);
+        gradient.addColorStop(0, `rgba(255, 106, 61, ${0.6 * glow.current})`);
+        gradient.addColorStop(0.45, `rgba(255, 59, 29, ${0.25 * glow.current})`);
         gradient.addColorStop(1, "rgba(255, 59, 29, 0)");
         context.lineWidth = 1.4;
         context.strokeStyle = gradient;

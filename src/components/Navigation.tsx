@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/lib/theme";
+import { EmberLink, useEmberClick } from "@/components/site/EmberBlock";
 import { CONTACT, NAV, PROFILE } from "@/data/profile";
 
 const Navigation = ({ ready = true }: { ready?: boolean }) => {
@@ -54,41 +55,14 @@ const Navigation = ({ ready = true }: { ready?: boolean }) => {
         style={{ transitionProperty: "transform, background-color, border-color, opacity" }}
       >
         <div className="shell flex h-[var(--nav-h)] items-center justify-between">
-          <Link to="/" className="group flex items-center gap-3" aria-label={`${PROFILE.brand} — home`}>
+          <EmberLink to="/" className="group flex items-center gap-3" aria-label={`${PROFILE.brand} — home`}>
             <Monogram />
             <span className="font-display text-lg uppercase tracking-wide text-paper">
               Codex<span className="text-ember">/</span>Prime
             </span>
-          </Link>
+          </EmberLink>
 
-          {/* The frosted bar: the page you're on is a solid ember block. */}
-          <nav aria-label="Primary" className="glass absolute left-1/2 hidden -translate-x-1/2 p-1 lg:block">
-            <ul className="flex items-center gap-1">
-              {NAV.map((item) => (
-                <li key={item.href}>
-                  <NavLink
-                    to={item.href}
-                    end={item.href === "/"}
-                    className={({ isActive }) =>
-                      cn(
-                        "flex items-baseline gap-1.5 px-4 py-2 text-sm transition-colors duration-300",
-                        isActive ? "bg-ember text-ink" : "text-paper/70 hover:bg-paper/10 hover:text-paper",
-                      )
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        <span className={cn("font-mono text-[0.65rem]", isActive ? "text-ink/70" : "text-ember")}>
-                          {item.index}
-                        </span>
-                        {item.label}
-                      </>
-                    )}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <PrimaryNav />
 
           <div className="flex items-center gap-2 sm:gap-4">
             <a
@@ -124,6 +98,84 @@ const Navigation = ({ ready = true }: { ready?: boolean }) => {
     </>
   );
 };
+
+/**
+ * The frosted bar. The page you're on sits under one ember block, which
+ * slides (on the spring) to whichever item becomes active — it's the same
+ * block the page change collapses into.
+ */
+function PrimaryNav() {
+  const { pathname } = useLocation();
+  const listRef = useRef<HTMLUListElement>(null);
+  const [marker, setMarker] = useState<{ left: number; width: number } | null>(null);
+  const placed = useRef(false);
+
+  // Measure before paint, so the block is never seen in the old spot.
+  useLayoutEffect(() => {
+    const measure = () => {
+      const active = listRef.current?.querySelector<HTMLElement>('[aria-current="page"]');
+      setMarker(active ? { left: active.offsetLeft, width: active.offsetWidth } : null);
+    };
+    measure();
+    // Fonts change the item widths once they load.
+    document.fonts?.ready.then(measure).catch(() => undefined);
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [pathname]);
+
+  // The first placement appears in place; only later moves slide.
+  const animate = placed.current;
+  useEffect(() => {
+    if (marker) placed.current = true;
+  }, [marker]);
+
+  return (
+    <nav aria-label="Primary" className="glass absolute left-1/2 hidden -translate-x-1/2 p-1 lg:block">
+      <ul ref={listRef} className="relative flex items-center gap-1">
+        {marker && (
+          <span
+            aria-hidden="true"
+            className="absolute inset-y-0 bg-ember"
+            style={{
+              left: marker.left,
+              width: marker.width,
+              transition: animate ? "left 0.7s var(--ease-spring), width 0.7s var(--ease-spring)" : "none",
+            }}
+          />
+        )}
+        {NAV.map((item) => (
+          <li key={item.href} className="relative">
+            <PrimaryLink href={item.href} index={item.index} label={item.label} />
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+function PrimaryLink({ href, index, label }: { href: string; index: string; label: string }) {
+  const onClick = useEmberClick(href);
+  return (
+    <NavLink
+      to={href}
+      end={href === "/"}
+      onClick={onClick}
+      className={({ isActive }) =>
+        cn(
+          "flex items-baseline gap-1.5 px-4 py-2 text-sm transition-colors duration-300",
+          isActive ? "text-ink" : "text-paper/70 hover:bg-paper/10 hover:text-paper",
+        )
+      }
+    >
+      {({ isActive }) => (
+        <>
+          <span className={cn("font-mono text-[0.65rem]", isActive ? "text-ink/70" : "text-ember")}>{index}</span>
+          {label}
+        </>
+      )}
+    </NavLink>
+  );
+}
 
 /**
  * The phone menu: a full-screen dialog, portalled to <body> so no transformed
@@ -209,20 +261,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
                 transitionDelay: `${120 + i * 60}ms`,
               }}
             >
-              <NavLink
-                to={item.href}
-                end={item.href === "/"}
-                onClick={onClose}
-                className={({ isActive }) =>
-                  cn(
-                    "flex items-baseline gap-4 border-b border-line py-3 font-display text-5xl uppercase leading-none transition-colors",
-                    isActive ? "text-ember" : "text-paper hover:text-ember",
-                  )
-                }
-              >
-                <span className="font-mono text-xs text-dim">{item.index}</span>
-                {item.label}
-              </NavLink>
+              <MobileLink href={item.href} index={item.index} label={item.label} onClose={onClose} />
             </li>
           ))}
         </ul>
@@ -241,6 +280,31 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
       </div>
     </div>,
     document.body,
+  );
+}
+
+/** A menu row: the block grows from the row you tapped as the menu closes behind it. */
+function MobileLink({ href, index, label, onClose }: { href: string; index: string; label: string; onClose: () => void }) {
+  const onClick = useEmberClick(href, onClose);
+  return (
+    <NavLink
+      to={href}
+      end={href === "/"}
+      onClick={(event) => {
+        onClick(event);
+        // Ctrl/⌘-click etc. aren't intercepted, but the menu should still close.
+        if (!event.defaultPrevented) onClose();
+      }}
+      className={({ isActive }) =>
+        cn(
+          "flex items-baseline gap-4 border-b border-line py-3 font-display text-5xl uppercase leading-none transition-colors",
+          isActive ? "text-ember" : "text-paper hover:text-ember",
+        )
+      }
+    >
+      <span className="font-mono text-xs text-dim">{index}</span>
+      {label}
+    </NavLink>
   );
 }
 

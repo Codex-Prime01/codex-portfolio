@@ -141,28 +141,26 @@ export function FloatingChips({ layer, labels, switchKey, phone = false, classNa
           // Implode toward the stage centre, hold, then burst out somewhere new.
           const cx = host.clientWidth / 2 - chip.offsetLeft - chip.offsetWidth / 2;
           const cy = host.clientHeight / 2 - chip.offsetTop - chip.offsetHeight / 2;
-          let x: number, y: number, scale: number, alpha: number;
+          // No fading: chips shrink to nothing and grow back out, so nothing pops.
+          let x: number, y: number, scale: number;
           if (elapsed < SWITCH.in) {
             const t = ease.inQuad(elapsed / SWITCH.in);
             x = s.baseX + s.rx + (cx - s.baseX - s.rx) * t;
             y = s.baseY + s.ry + (cy - s.baseY - s.ry) * t;
-            scale = 1 - 0.9 * t;
-            alpha = 1 - t;
+            scale = 1 - t;
           } else if (elapsed < SWITCH.in + SWITCH.hold) {
             x = cx;
             y = cy;
-            scale = 0.1;
-            alpha = 0;
+            scale = 0;
           } else {
             const t = Math.min(1, (elapsed - SWITCH.in - SWITCH.hold) / SWITCH.out);
-            const e = ease.outBack(t, 1.5);
+            const e = ease.spring(t);
             x = cx + (s.nextX - cx) * e;
             y = cy + (s.nextY - cy) * e;
-            scale = 0.1 + 0.9 * e;
-            alpha = Math.min(1, t * 1.6);
+            scale = e;
           }
           chip.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${tilt}deg) scale(${scale})`;
-          chip.style.opacity = String(alpha * spots[i].opacity);
+          chip.style.opacity = String(spots[i].opacity);
           return;
         }
 

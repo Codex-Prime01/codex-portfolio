@@ -6,6 +6,7 @@ import { ChamferLink, Arrow } from "@/components/site/ChamferLink";
 import { Corners } from "@/components/site/Intro";
 import { OverlapDiagram } from "@/components/visual/OverlapDiagram";
 import { ARCHIVE, CONTACT, PROJECTS, type Project, type ProjectLink } from "@/data/profile";
+import { useScrollPush } from "@/lib/motion";
 
 /** The stepped-corner plate shape, as a clip on the plate's own box. */
 const PLATE_CLIP =
@@ -40,6 +41,8 @@ const Projects = () => {
 
 /** Section heading: index, a huge title and a short aside, over a drawn rule. */
 export function SectionHead({ index, title, id, aside }: { index: string; title: string; id: string; aside?: string }) {
+  const titleRef = useRef<HTMLDivElement>(null);
+  useScrollPush(titleRef);
   return (
     <header className="mb-10 sm:mb-24">
       <div className="mb-6 flex items-end justify-between gap-6">
@@ -49,14 +52,17 @@ export function SectionHead({ index, title, id, aside }: { index: string; title:
         {aside && <p className="label text-right">{aside}</p>}
       </div>
       <Reveal variant="rule" />
-      <SplitText
-        as="h2"
-        id={id}
-        text={title}
-        by="letter"
-        stagger={30}
-        className="display mt-6 block text-[clamp(2.75rem,12vw,12rem)] text-paper"
-      />
+      {/* The title drifts toward you as you scroll past it. */}
+      <div ref={titleRef} className="origin-bottom-left">
+        <SplitText
+          as="h2"
+          id={id}
+          text={title}
+          by="letter"
+          stagger={30}
+          className="display mt-6 block text-[clamp(2.75rem,12vw,12rem)] text-paper"
+        />
+      </div>
     </header>
   );
 }

@@ -291,7 +291,6 @@ export function NigeriaMap({ className }: { className?: string }) {
           strokeLinecap="round"
           strokeDasharray={length ? `${length} ${length}` : undefined}
           strokeDashoffset={length ? length - travelled : undefined}
-          style={{ filter: "drop-shadow(0 0 6px rgba(255,59,29,0.7))" }}
         />
         <g ref={headRef} style={{ opacity: progress > 0 && progress < 1 ? 1 : 0, transition: "opacity 0.4s" }}>
           <circle r="16" fill="rgba(255,106,61,0.25)" />

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { EmberLink } from "@/components/site/EmberBlock";
 import { cn } from "@/lib/utils";
 import { SplitText } from "@/components/motion/SplitText";
 import { Reveal } from "@/components/motion/Reveal";
@@ -222,13 +222,13 @@ function Footer() {
           <ul className="flex flex-col md:items-end">
             {NAV.map((item, i) => (
               <li key={item.href} className="border-b border-line md:border-0">
-                <Link
+                <EmberLink
                   to={item.href}
                   className="group flex items-baseline justify-between gap-4 py-2 font-display text-3xl uppercase leading-none text-paper transition-colors hover:text-ember sm:text-4xl md:justify-end"
                 >
                   <span className="font-mono text-[0.65rem] text-dim md:order-2">{item.index}</span>
                   <SplitText by="letter" text={item.label} delay={260 + i * 80} stagger={22} />
-                </Link>
+                </EmberLink>
               </li>
             ))}
             <li>

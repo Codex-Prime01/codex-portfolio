@@ -15,7 +15,7 @@ export function RisingBits() {
     const host = hostRef.current;
     if (!host || prefersReducedMotion()) return;
     // Phones get fewer, so the stage stays calm and the battery stays happy.
-    const every = window.matchMedia("(max-width: 639px)").matches ? 900 : 420;
+    const every = window.matchMedia("(max-width: 639px)").matches ? 1800 : 840;
     const timers = new Set<number>();
 
     const spawn = () => {
@@ -27,8 +27,7 @@ export function RisingBits() {
       bit.style.left = `${Math.random() * 100}%`;
       bit.style.fontSize = `${10 + Math.random() * 10}px`;
       bit.style.setProperty("--dur", `${duration}s`);
-      bit.style.setProperty("--o", `${0.12 + Math.random() * 0.3}`);
-      if (Math.random() < 0.25) bit.style.color = "var(--ember)";
+      bit.style.setProperty("--o", `${0.08 + Math.random() * 0.18}`);
       host.appendChild(bit);
       const timer = window.setTimeout(() => {
         bit.remove();
